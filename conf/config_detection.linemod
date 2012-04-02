@@ -1,0 +1,24 @@
+# info about the db
+
+source1:
+#  type: ros_kinect
+#  rgb_frame_id: '/camera_rgb_optical_frame'
+  bag: /home/vrabaud/tod_data_new/training/object_recognition_capture/eggo_01.bag
+
+sink1:
+  type: publisher
+
+pipeline1:
+  method: 'LINEMOD'
+  package: 'linemod'
+  submethod: 'DefaultLINEMOD'
+  sources: [source1]
+  sinks: [sink1]
+  parameters:
+    # The list of object_ids to analyze
+    #object_ids: 'all'
+    object_ids: ['ed149575c2a44c1c095c5bc1b80c3038']
+    db:
+      type: 'CouchDB'
+      root: 'http://localhost:5984'
+      collection: 'object_recognition'

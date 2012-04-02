@@ -1,0 +1,11 @@
+pipeline1:
+  method: 'LINEMOD'
+  package: 'linemod'
+  submethod: 'DefaultLINEMOD'
+  parameters:
+    # The list of object_ids to analyze
+    object_ids: 'all'
+    db:
+      type: 'CouchDB'
+      root: 'http://localhost:5984'
+      collection: 'object_recognition'
