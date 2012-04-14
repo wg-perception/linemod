@@ -1,11 +1,11 @@
-Catkin-ProjectName: linemod
+Catkin-ProjectName: or-linemod
 Version: 0.1.0
 Description: A object recognition pipeline that uses LINE-MOD from OpenCV
 
 Author: Vincent Rabaud <vrabaud@willowgarage.com>, Ethan Rublee <erublee@willowgarage.com>
 Maintainer:  Vincent Rabaud <vrabaud@willowgarage.com>
 
-Depends: catkin, ecto, opencv2
+Depends: catkin, ecto, object_recognition_core, opencv2
 
 Catkin-CopyrightType:  willowgarage
 Catkin-DebRulesType: cmake
