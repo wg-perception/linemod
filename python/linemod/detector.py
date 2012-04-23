@@ -3,7 +3,7 @@
 Module defining the LINE-MOD detector to find objects in a scene
 """
 
-from object_recognition_core.db.object_db import ObjectDb, DbModels, ObjectDbParameters
+from object_recognition_core.db.object_db import ObjectDb, DbModels
 from object_recognition_core.utils import json_helper
 from object_recognition_core.pipelines.detection import DetectionPipeline
 import ecto_cells.ecto_linemod as ecto_linemod
