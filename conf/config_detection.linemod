@@ -10,7 +10,7 @@ sink1:
 
 pipeline1:
   method: 'LINEMOD'
-  package: 'linemod'
+  package: 'object_recognition_linemod'
   submethod: 'DefaultLINEMOD'
   sources: [source1]
   sinks: [sink1]

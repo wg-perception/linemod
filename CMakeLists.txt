@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
-project(linemod)
+project(object_recognition_linemod)
 find_package(catkin REQUIRED)
 catkin_stack()
-catkin_project(linemod
+catkin_project(object_recognition_linemod
                DEPENDS OpenCV object_recognition_core
 )
 
@@ -12,7 +12,7 @@ catkin_python_setup()
 set(PYTHON_PACKAGES_PATH gen/py)
 
 # Compile the module
-set_ecto_install_package_name(linemod/ecto_cells)
+set_ecto_install_package_name(${PROJECT_NAME}/ecto_cells)
 
 add_subdirectory(python)
 add_subdirectory(src)
@@ -23,4 +23,3 @@ if(BUILD_TEST)
   enable_testing()
   add_subdirectory(test)
 endif()
-

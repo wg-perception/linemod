@@ -1,4 +1,4 @@
-Catkin-ProjectName: or-linemod
+Catkin-ProjectName: object_recognition_linemod
 Version: 0.1.0
 Description: A object recognition pipeline that uses LINE-MOD from OpenCV
 
