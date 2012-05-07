@@ -1,6 +1,5 @@
 find_package(object_recognition_core REQUIRED)
 find_package(OpenCV REQUIRED)
-find_pcl_package()
 
 # Compile the ecto 
 ectomodule(ecto_linemod
