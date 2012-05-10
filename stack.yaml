@@ -1,5 +1,5 @@
 Catkin-ProjectName: object_recognition_linemod
-Version: 0.1.0
+Version: 0.1.1
 Description: An object recognition pipeline that uses LINE-MOD from OpenCV
 
 Author: Vincent Rabaud <vrabaud@willowgarage.com>
