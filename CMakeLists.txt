@@ -11,6 +11,8 @@ catkin_python_setup()
 
 set(PYTHON_PACKAGES_PATH gen/py)
 
+find_package(ecto REQUIRED)
+
 # Compile the module
 set_ecto_install_package_name(${PROJECT_NAME}/ecto_cells)
 
