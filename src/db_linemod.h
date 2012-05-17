@@ -43,21 +43,21 @@ namespace object_recognition_core
 {
   namespace db
   {
-    // Specializations for cv::FileNode
+    // Specializations for std::vector<cv::Mat>
     template<>
     void
-    object_recognition_core::db::Document::get_attachment<cv::linemod::Detector>(const AttachmentName &attachment_name,
-                                                                                 cv::linemod::Detector & value) const;
+    object_recognition_core::db::Document::get_attachment<std::vector<cv::Mat> >(const AttachmentName& attachment_name,
+        std::vector<cv::Mat>& value) const;
 
     template<>
     void
-    object_recognition_core::db::Document::get_attachment_and_cache<cv::linemod::Detector>(
-        const AttachmentName &attachment_name, cv::linemod::Detector & value);
+    object_recognition_core::db::Document::get_attachment_and_cache<std::vector<cv::Mat> >(
+      const AttachmentName& attachment_name, std::vector<cv::Mat>& value);
 
     template<>
     void
-    object_recognition_core::db::Document::set_attachment<cv::linemod::Detector>(const AttachmentName &attachment_name,
-                                                                                 const cv::linemod::Detector & value);
+    object_recognition_core::db::Document::set_attachment<std::vector<cv::Mat> >(const AttachmentName& attachment_name,
+        const std::vector<cv::Mat>& value);
   }
 }
 

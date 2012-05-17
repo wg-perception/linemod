@@ -47,11 +47,11 @@ namespace object_recognition
 {
   namespace db
   {
-    // Specializations for cv::FileNode
+    // Specializations for std::vector<cv::Mat>
     template<>
     void
-    object_recognition_core::db::Document::get_attachment<cv::linemod::Detector>(const AttachmentName &attachment_name,
-                                                                                 cv::linemod::Detector & value) const
+    object_recognition_core::db::Document::get_attachment<std::vector<cv::Mat> >(const AttachmentName& attachment_name,
+        std::vector<cv::Mat> &value) const
     {
       // Get the binary file
       std::string file_name = temporary_yml_file_name(false);
@@ -60,31 +60,35 @@ namespace object_recognition
 
       // Write it to disk
       std::ofstream writer(file_name.c_str());
-      writer << ss.rdbuf();
+      writer << ss.rdbuf() << std::flush;
 
       // Read it
       cv::FileStorage fs(file_name, cv::FileStorage::READ);
-      value.readClass(fs.root(), get_value<ObjectId>("object_id"));
+      cv::FileNode matrices = fs["matrices"];
+      matrices >> value;
+    
       boost::filesystem::remove(file_name.c_str());
     }
 
     template<>
     void
-    object_recognition_core::db::Document::get_attachment_and_cache<cv::linemod::Detector>(
-        const AttachmentName &attachment_name, cv::linemod::Detector & value)
+    object_recognition_core::db::Document::get_attachment_and_cache<std::vector<cv::Mat> >(const AttachmentName& attachment_name,
+        std::vector<cv::Mat>  &value)
     {
     }
 
     template<>
     void
-    object_recognition_core::db::Document::set_attachment<cv::linemod::Detector>(const AttachmentName &attachment_name,
-                                                                                 const cv::linemod::Detector & value)
+    object_recognition_core::db::Document::set_attachment<std::vector<cv::Mat>  >(const AttachmentName& attachment_name,
+        const std::vector<cv::Mat>& value)
     {
       // First write the class to a file
       std::string file_name = temporary_yml_file_name(false);
       {
         cv::FileStorage fs(file_name, cv::FileStorage::WRITE);
-        value.writeClass(value.classIds()[0], fs);
+        fs << "matrices" << value;
+
+        fs.release();
       }
 
       // Read the file as a stream
@@ -97,3 +101,4 @@ namespace object_recognition
     }
   }
 }
+
