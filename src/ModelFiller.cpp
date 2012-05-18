@@ -53,9 +53,11 @@ namespace linemod_ecto
     declare_io(const ecto::tendrils& params, ecto::tendrils& inputs, ecto::tendrils& outputs)
     {
       typedef ModelFiller C;
-      inputs.declare(&C::detector_, "detector", "The Linemod detector.").required(true);
-      outputs.declare(&C::Rs_, "Rs", "The matching rotations of the templates");
-      outputs.declare(&C::Ts_, "Ts", "The matching translations of the templates.");
+      inputs.declare(&C::depths_, "depths", "The matching rotations of the templates");
+      inputs.declare(&C::images_, "images", "The matching rotations of the templates");
+      inputs.declare(&C::masks_, "masks", "The matching rotations of the templates");
+      inputs.declare(&C::Rs_, "Rs", "The matching rotations of the templates");
+      inputs.declare(&C::Ts_, "Ts", "The matching translations of the templates.");
 
       outputs.declare(&C::db_document_, "db_document", "The filled document.");
     }
@@ -63,14 +65,18 @@ namespace linemod_ecto
     int
     process(const ecto::tendrils& inputs, const ecto::tendrils& outputs)
     {
-      db_document_->set_attachment<cv::linemod::Detector>("detector", **detector_);
+      db_document_->set_attachment<std::vector<cv::Mat> >("depths", *depths_);
+      db_document_->set_attachment<std::vector<cv::Mat> >("images", *images_);
+      db_document_->set_attachment<std::vector<cv::Mat> >("masks", *masks_);
       db_document_->set_attachment<std::vector<cv::Mat> >("Rs", *Rs_);
       db_document_->set_attachment<std::vector<cv::Mat> >("Ts", *Ts_);
       return ecto::OK;
     }
 
   private:
-    ecto::spore<cv::Ptr<cv::linemod::Detector> > detector_;
+    ecto::spore<std::vector<cv::Mat> > depths_;
+    ecto::spore<std::vector<cv::Mat> > images_;
+    ecto::spore<std::vector<cv::Mat> > masks_;
     ecto::spore<Document> db_document_;
     ecto::spore<std::vector<cv::Mat> > Rs_;
     ecto::spore<std::vector<cv::Mat> > Ts_;
