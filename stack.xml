@@ -1,0 +1,18 @@
+<stack>
+  <name>object_recognition_linemod</name>
+  <version>0.1.1</version>
+  <description>An object recognition pipeline that uses LINE-MOD from OpenCV</description>
+  <author email="vrabaud@willowgarage.com">Vincent Rabaud</author>
+  <maintainer email="vrabaud@willowgarage.com">Vincent Rabaud</maintainer>
+  <license>BSD</license>
+  <copyright>Willow Garage</copyright>
+  
+  <url>https://github.com/wg-perception/linemod</url>
+  <build_depends>catkin</build_depends>
+  <build_depends>ecto</build_depends>
+  <build_depends>object_recognition_core</build_depends>
+  <build_depends>opencv2</build_depends>
+  <depends>ecto</depends>
+  <depends>object_recognition_core</depends>
+  <depends>opencv2</depends>
+</stack>
