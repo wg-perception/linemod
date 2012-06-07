@@ -1,3 +1,5 @@
+.. _LINE-MOD:
+
 LINE-MOD
 ========
 
