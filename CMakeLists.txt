@@ -9,8 +9,6 @@ catkin_project(object_recognition_linemod
 #install targets for all things python
 catkin_python_setup()
 
-set(PYTHON_PACKAGES_PATH gen/py)
-
 find_package(ecto REQUIRED)
 
 # Compile the module
