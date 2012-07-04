@@ -81,30 +81,75 @@ namespace ecto_linemod
     int
     process(const tendrils& inputs, const tendrils& outputs)
     {
+
       CV_Assert(depth_mask_->type() == CV_8UC1);
 
       // Figure out the interesting bounding box in the depth mask
-      int x_min = depth_->cols, x_max = 0, y_min = depth_->rows, y_max = 0;
-      for (int v = 0; v != depth_->rows; ++v)
+      int x_min = -1, x_max = depth_->cols, y_min = -1, y_max = depth_->rows;
+      bool rowIsZero = true;
+      // Figure out y_min
+      while (rowIsZero)
       {
-        uchar *row =depth_mask_->ptr(v);
-        uchar*row_end = row+depth_->cols;
-        for (; row!=row_end; ++row)
-        {
-          if (!*row)
-            continue;
-          //TODO
-        }
+        ++y_min;
+        for (uchar *row = &depth_mask_->at < uchar > (y_min, 0), *row_end = row + depth_mask_->cols; row != row_end;
+            ++row)
+          if (*row)
+          {
+            rowIsZero = false;
+            break;
+          }
+      }
+      // Figure out y_max
+      rowIsZero = true;
+      while (rowIsZero)
+      {
+        --y_max;
+        for (uchar *row = &depth_mask_->at < uchar > (y_max, 0), *row_end = row + depth_mask_->cols; row != row_end;
+            ++row)
+          if (*row)
+          {
+            rowIsZero = false;
+            break;
+          }
       }
 
-      cv::Rect area(x_min, y_min, x_max - x_min, y_max - y_min);
+      // Figure out x_min
+      bool colIsZero = true;
+      while (colIsZero)
+      {
+        ++x_min;
+        for (uchar *row = &depth_mask_->at < uchar > (y_min, x_min), *row_end = &depth_mask_->at < uchar
+            > (y_max, x_min); row != row_end; row += depth_->step)
+          if (*row)
+          {
+            colIsZero = false;
+            break;
+          }
+      }
+      // Figure out x_max
+      colIsZero = true;
+      while (colIsZero)
+      {
+        --x_max;
+        for (uchar *row = &depth_mask_->at < uchar > (y_min, x_max), *row_end = &depth_mask_->at < uchar
+            > (y_max, x_max); row != row_end; row += depth_->step)
+          if (*row)
+          {
+            colIsZero = false;
+            break;
+          }
+      }
+
+      cv::Rect area(x_min, y_min, x_max + 1 - x_min, y_max + 1 - y_min);
 
       // Only save the interesting areas to the models
       cv::Mat depth, image, mask;
+
       cv::Range row_range = cv::Range(area.y, area.y + area.height), col_range = cv::Range(area.x, area.x + area.width);
-      cv::Range row_range_image = cv::Range((area.y * image_->cols) / mask.cols,
-                                            ((area.y + area.height) * image_->cols) / mask.cols), col_range_image =
-          cv::Range((area.x * image_->rows) / mask.rows, ((area.x + area.width) * image_->rows) / mask.rows);
+      cv::Range row_range_image = cv::Range((area.y * image_->cols) / depth_mask_->cols,
+                                            ((area.y + area.height) * image_->cols) / depth_mask_->cols),
+          col_range_image = cv::Range((area.x * image_->rows) / depth_mask_->rows,
+                                      ((area.x + area.width) * image_->rows) / depth_mask_->rows);
 
       (*depth_)(row_range, col_range).copyTo(depth);
       cv::resize((*image_)(row_range_image, col_range_image), image, cv::Size(area.width, area.height), 0.0, 0.0,
