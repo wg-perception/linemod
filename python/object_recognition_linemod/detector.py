@@ -14,7 +14,7 @@ class LinemodDetectionPipeline(DetectionPipeline):
     @classmethod
     def type_name(cls):
         return 'LINEMOD'
-
+    @classmethod
     def detector(self, *args, **kwargs):
         #visualize = args.get('visualize', False)
         submethod = kwargs.get('submethod')
