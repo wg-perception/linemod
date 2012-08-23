@@ -1,6 +1,6 @@
 .. _LINE-MOD:
 
-LINE-MOD
-========
+object_recognition_linemod: Object Recognition Using LINE-MOD
+=============================================================
 
-AN objet recognition pipeline using LINE-MOD
+This pipeline implements LINE-MOD. For more information, see http://ar.in.tum.de/Main/StefanHinterstoisser.
