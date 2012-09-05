@@ -2,7 +2,8 @@ find_package(object_recognition_core REQUIRED)
 find_package(OpenCV REQUIRED)
 
 # Compile the ecto 
-ectomodule(ecto_linemod
+ectomodule(ecto_linemod DESTINATION ${PROJECT_NAME}/ecto_cells
+                        INSTALL
            db_linemod.cpp
            linemod_detect.cpp
            linemod_train.cpp
@@ -19,5 +20,3 @@ link_ecto(ecto_linemod
           ${object_recognition_core_LIBRARIES}
           ${OpenCV_LIBRARIES}
 )
-
-install_ecto_module(ecto_linemod)

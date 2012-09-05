@@ -12,8 +12,6 @@ catkin_python_setup()
 find_package(ecto REQUIRED)
 
 # Compile the module
-set_ecto_install_package_name(${PROJECT_NAME}/ecto_cells)
-
 add_subdirectory(python)
 add_subdirectory(src)
 
