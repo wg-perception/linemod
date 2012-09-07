@@ -1,9 +1,9 @@
 # info about the db
 
 source1:
-#  type: ros_kinect
+  type: ros_kinect
 #  rgb_frame_id: '/camera_rgb_optical_frame'
-  bag: /home/vrabaud/tod_data_new/training/object_recognition_capture/eggo_01.bag
+#  bag: /home/vrabaud/tod_data_new/training/object_recognition_capture/eggo_01.bag
 
 sink1:
   type: publisher
