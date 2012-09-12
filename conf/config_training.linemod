@@ -1,7 +1,7 @@
 pipeline1:
-  method: 'LINEMOD'
-  package: 'object_recognition_linemod'
-  submethod: 'DefaultLINEMOD'
+  type: 'LINEMOD'
+  module: 'object_recognition_linemod'
+  subtype: 'DefaultLINEMOD'
   parameters:
     # The list of object_ids to analyze
     object_ids: 'all'

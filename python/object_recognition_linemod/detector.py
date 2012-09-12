@@ -11,6 +11,17 @@ import ecto_cells.ecto_linemod as ecto_linemod
 ########################################################################################################################
 
 class LinemodDetectionPipeline(DetectionPipeline):
+
+    @classmethod
+    def config_doc(cls):
+        return  """
+                    parameters:
+                        # The path of the 'registrationMask_SXGA.png' given in the conf folder
+                        registrationMaskFilename: '/tmp/registrationMask_SXGA.png'
+                        # The usual parameters for the DB
+                        db:
+        """
+
     @classmethod
     def type_name(cls):
         return 'LINEMOD'

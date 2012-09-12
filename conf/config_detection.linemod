@@ -9,9 +9,9 @@ sink1:
   type: publisher
 
 pipeline1:
-  method: 'LINEMOD'
-  package: 'object_recognition_linemod'
-  submethod: 'DefaultLINEMOD'
+  type: 'LINEMOD'
+  module: 'object_recognition_linemod'
+  subtype: 'DefaultLINEMOD'
   sources: [source1]
   sinks: [sink1]
   parameters:
