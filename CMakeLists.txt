@@ -1,10 +1,13 @@
 cmake_minimum_required(VERSION 2.8)
 project(object_recognition_linemod)
 find_package(catkin REQUIRED)
+if (${catkin_VERSION} VERSION_GREATER "0.5.26")
+catkin_package()
+catkin_package_export()
+else()
 catkin_stack()
-catkin_project(object_recognition_linemod
-               DEPENDS OpenCV object_recognition_core
-)
+catkin_project(object_recognition_linemod)
+endif()
 
 #install targets for all things python
 catkin_python_setup()
