@@ -15,6 +15,7 @@ find_package(ecto REQUIRED)
 
 # Compile the module
 add_subdirectory(python)
+add_subdirectory(sample)
 add_subdirectory(src)
 
 # add the tests
