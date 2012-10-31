@@ -36,9 +36,11 @@
 #include <ecto/ecto.hpp>
 
 #include <boost/foreach.hpp>
+#include <boost/format.hpp>
 
-#include <opencv2/objdetect/objdetect.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/objdetect/objdetect.hpp>
 
 #include <object_recognition_core/common/pose_result.h>
 
@@ -47,6 +49,29 @@ using ecto::spore;
 using object_recognition_core::db::ObjectId;
 using object_recognition_core::common::PoseResult;
 using object_recognition_core::db::ObjectDb;
+
+void
+drawResponse(const std::vector<cv::linemod::Template>& templates, int num_modalities, cv::Mat& dst, cv::Point offset,
+             int T)
+{
+  static const cv::Scalar COLORS[5] =
+  { CV_RGB(0, 0, 255), CV_RGB(0, 255, 0), CV_RGB(255, 255, 0), CV_RGB(255, 140, 0), CV_RGB(255, 0, 0) };
+
+  for (int m = 0; m < num_modalities; ++m)
+  {
+// NOTE: Original demo recalculated max response for each feature in the TxT
+// box around it and chose the display color based on that response. Here
+// the display color just depends on the modality.
+    cv::Scalar color = COLORS[m];
+
+    for (int i = 0; i < (int) templates[m].features.size(); ++i)
+    {
+      cv::linemod::Feature f = templates[m].features[i];
+      cv::Point pt(f.x + offset.x, f.y + offset.y);
+      cv::circle(dst, pt, T / 2, color);
+    }
+  }
+}
 
 struct LinemodDetector
 {
@@ -62,6 +87,8 @@ struct LinemodDetector
     inputs.declare(&LinemodDetector::color_, "image", "An rgb full frame image.");
     inputs.declare(&LinemodDetector::depth_, "depth", "The 16bit depth image.");
 
+    outputs.declare(&LinemodDetector::out_, "image", "The found template.");
+
     //outputs.declare(&LinemodDetector::pose_results_, "pose_results", "The results of object recognition");
   }
 
@@ -75,16 +102,37 @@ struct LinemodDetector
 
     detector_ = cv::linemod::getDefaultLINEMOD();
 
-    unsigned int template_id = 0;
-    while (template_id <= 100)
+    unsigned int index = 0;
+    while (index <= 100)
     {
       cv::Mat image, depth, mask;
+      std::cout << index << std::endl;
+
+      depth = cv::imread(boost::str(boost::format("/home/vrabaud/tmp/first/depth_%05d.png") % (index)),
+                         CV_LOAD_IMAGE_ANYDEPTH);
+      image = cv::imread(boost::str(boost::format("/home/vrabaud/tmp/first/image_%05d.png") % (index)),
+                         CV_LOAD_IMAGE_COLOR);
+      std::cout << boost::str(boost::format("/home/vrabaud/tmp/first/mask_%05d.png") % (index)) << std::endl;
+      mask = cv::imread(boost::str(boost::format("/home/vrabaud/tmp/first/mask_%05d.png") % (index)),
+                        CV_LOAD_IMAGE_GRAYSCALE);
+
+      std::cout << depth.depth() << " " << depth.type() << " " << depth.cols << std::endl;
+      std::cout << image.depth() << " " << image.type() << " " << image.cols << std::endl;
+      std::cout << mask.depth() << " " << mask.type() << " " << mask.cols << std::endl;
 
       std::vector<cv::Mat> sources;
       sources.push_back(image);
       sources.push_back(depth);
 
-      detector_->addTemplate(sources, "object1", mask);
+      try
+      {
+        detector_->addTemplate(sources, "object1", mask);
+      } catch (int e)
+      {
+
+      }
+
+      ++index;
 
       //document.get_attachment < std::vector<cv::Mat> > ("Rs", Rs_[object_id]);
       //document.get_attachment < std::vector<cv::Mat> > ("Ts", Ts_[object_id]);
@@ -97,6 +145,8 @@ struct LinemodDetector
     // Resize color to 640x480
     /// @todo Move resizing to separate cell, and try LINE-MOD w/ SXGA images
     cv::Mat color;
+    if ((color_->empty()) || (depth_->empty()))
+      return ecto::OK;
     if (color_->rows > 960)
       cv::pyrDown(color_->rowRange(0, 960), color);
     else
@@ -108,30 +158,35 @@ struct LinemodDetector
 
     std::vector<cv::linemod::Match> matches;
     detector_->match(sources, *threshold_, matches);
-    pose_results_->clear();
-    BOOST_FOREACH(const cv::linemod::Match & match, matches)
-    {
-      /// @todo Where do R and T come from? Can associate with matches[0].template_id
-      /*PoseResult pose_result;
-       pose_result.set_R(Rs_.at(match.class_id)[match.template_id]);
-       pose_result.set_T(Ts_.at(match.class_id)[match.template_id]);
-       pose_result.set_object_id(*db_, match.class_id);
-       pose_results_->push_back(pose_result);*/
-    }
+    //pose_results_->clear();
+    cv::Mat display;
+    color.copyTo(display);
+    int num_modalities = (int)detector_->getModalities().size();
+    BOOST_FOREACH(const cv::linemod::Match & match, matches){
+    /// @todo Where do R and T come from? Can associate with matches[0].template_id
+    const std::vector<cv::linemod::Template>& templates = detector_->getTemplates(match.class_id, match.template_id);
+    drawResponse(templates, num_modalities, display, cv::Point(match.x, match.y), detector_->getT(0));
+    /*PoseResult pose_result;
+     pose_result.set_R(Rs_.at(match.class_id)[match.template_id]);
+     pose_result.set_T(Ts_.at(match.class_id)[match.template_id]);
+     pose_result.set_object_id(*db_, match.class_id);
+     pose_results_->push_back(pose_result);*/
+  }
+    std::cout << matches.size() << " ";
+    display.copyTo(*out_);
 
     return ecto::OK;
   }
 
   cv::Ptr<cv::linemod::Detector> detector_;
-  // Parameters
+// Parameters
   spore<float> threshold_;
-  // Inputs
+// Inputs
   spore<cv::Mat> color_, depth_;
+  spore<cv::Mat> out_;
 
   /** The object recognition results */
   ecto::spore<std::vector<PoseResult> > pose_results_;
-  /** The DB parameters */
-  ecto::spore<ObjectDb> db_;
   /** The rotations, per object and per template */
   std::map<std::string, std::vector<cv::Mat> > Rs_;
   /** The translations, per object and per template */

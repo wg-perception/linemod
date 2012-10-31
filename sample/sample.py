@@ -59,15 +59,16 @@ if __name__ == '__main__':
     source = create_source('image_pipeline','OpenNISource',image_mode=VGA_RES,image_fps=FPS_30)
     #from ecto_openni import SXGA_RES, FPS_15
     #source = create_source('image_pipeline','OpenNISource',image_mode=SXGA_RES,image_fps=FPS_15)
-    rgb2gray = cvtColor('Grayscale', flag=Conversion.RGB2GRAY)
+    #rgb2gray = cvtColor('Grayscale', flag=Conversion.RGB2GRAY)
     detector = Detector()
 
     #connect up the pose_est
     plasm.connect(source['image'] >> detector['image'],
                   source['depth'] >> detector['depth']
                   )
-    
+
     # display the warped image
-    plasm.connect(source['image'] >> imshow(name='warped')[:])
+    plasm.connect(source['image'] >> imshow(name='original')[:],
+                  detector['image'] >> imshow(name='result')[:])
 
     run_plasm(options, plasm, locals=vars())
