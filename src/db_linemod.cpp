@@ -43,15 +43,82 @@ namespace
 {
   object_recognition_core::db::MimeType MIME_TYPE = "text/x-yaml";
 }
-namespace object_recognition
+namespace object_recognition_core
 {
   namespace db
   {
+    // Specializations for cv::linemod::Detector
+    template<>
+    void
+    object_recognition_core::db::Document::get_attachment<cv::linemod::Detector>(const AttachmentName& attachment_name,
+                                                                                 cv::linemod::Detector& value) const
+    {
+      // Get the binary file
+      std::string file_name = temporary_yml_file_name(true);
+      std::stringstream ss;
+      this->get_attachment_stream(attachment_name, ss, MIME_TYPE);
+
+      // Write it to disk
+      std::ofstream writer(file_name.c_str());
+      writer << ss.rdbuf() << std::flush;
+
+      // Read it
+      cv::FileStorage fs(file_name, cv::FileStorage::READ);
+      value.read(fs.root());
+
+      cv::FileNode fn = fs["classes"];
+      for (cv::FileNodeIterator i = fn.begin(), iend = fn.end(); i != iend; ++i)
+        value.readClass(*i);
+
+      // Delete the tmp file
+      boost::filesystem::remove(file_name.c_str());
+    }
+
+    template<>
+    void
+    object_recognition_core::db::Document::get_attachment_and_cache<cv::linemod::Detector>(
+        const AttachmentName& attachment_name, cv::linemod::Detector& value)
+    {
+      throw("Not implemented");
+    }
+
+    template<>
+    void
+    object_recognition_core::db::Document::set_attachment<cv::linemod::Detector>(const AttachmentName& attachment_name,
+                                                                                 const cv::linemod::Detector& value)
+    {
+      // First write the class to a file
+      std::string file_name = temporary_yml_file_name(true);
+      {
+        cv::FileStorage fs(file_name, cv::FileStorage::WRITE);
+        value.write(fs);
+        std::vector < std::string > ids = value.classIds();
+        fs << "classes" << "[";
+        for (int i = 0; i < (int) ids.size(); ++i)
+        {
+          fs << "{";
+          value.writeClass(ids[i], fs);
+          fs << "}"; // current class
+        }
+        fs << "]"; // classes
+        fs.release();
+      }
+
+      // Read the file as a stream
+      std::ifstream reader(file_name.c_str());
+      std::stringstream out;
+      out << reader.rdbuf();
+
+      set_attachment_stream(attachment_name, out, MIME_TYPE);
+      boost::filesystem::remove(file_name.c_str());
+    }
+
     // Specializations for std::vector<cv::Mat>
+    // Not used but you never know ...
     template<>
     void
     object_recognition_core::db::Document::get_attachment<std::vector<cv::Mat> >(const AttachmentName& attachment_name,
-        std::vector<cv::Mat> &value) const
+                                                                                 std::vector<cv::Mat> &value) const
     {
       // Get the binary file
       std::string file_name = temporary_yml_file_name(false);
@@ -66,21 +133,22 @@ namespace object_recognition
       cv::FileStorage fs(file_name, cv::FileStorage::READ);
       cv::FileNode matrices = fs["matrices"];
       matrices >> value;
-    
+
       boost::filesystem::remove(file_name.c_str());
     }
 
     template<>
     void
-    object_recognition_core::db::Document::get_attachment_and_cache<std::vector<cv::Mat> >(const AttachmentName& attachment_name,
-        std::vector<cv::Mat>  &value)
+    object_recognition_core::db::Document::get_attachment_and_cache<std::vector<cv::Mat> >(
+        const AttachmentName& attachment_name, std::vector<cv::Mat> &value)
     {
+      throw("Not implemented");
     }
 
     template<>
     void
-    object_recognition_core::db::Document::set_attachment<std::vector<cv::Mat>  >(const AttachmentName& attachment_name,
-        const std::vector<cv::Mat>& value)
+    object_recognition_core::db::Document::set_attachment<std::vector<cv::Mat> >(const AttachmentName& attachment_name,
+                                                                                 const std::vector<cv::Mat>& value)
     {
       // First write the class to a file
       std::string file_name = temporary_yml_file_name(false);
@@ -101,4 +169,3 @@ namespace object_recognition
     }
   }
 }
-

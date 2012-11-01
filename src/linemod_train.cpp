@@ -35,6 +35,9 @@
 
 #include <ecto/ecto.hpp>
 
+#include <boost/filesystem.hpp>
+#include <boost/format.hpp>
+
 #include <object_recognition_core/common/json.hpp>
 
 #include <opencv2/core/core.hpp>
@@ -55,136 +58,78 @@ namespace ecto_linemod
     declare_params(tendrils& params)
     {
       /// @todo Parameters for various LINE-MOD settings?
-      params.declare(&Trainer::json_submethod_, "json_submethod", "The submethod to use, as a JSON string.").required(
-          true);
+      params.declare(&Trainer::path_, "path", "The path to where the temporary images are.").required(true);
+      //params.declare(&Trainer::json_submethod_, "json_submethod", "The submethod to use, as a JSON string.").required(
+      //  true);
     }
 
     static void
     declare_io(const tendrils& params, tendrils& inputs, tendrils& outputs)
     {
-      inputs.declare(&Trainer::image_, "image", "An rgb full frame image.").required(true);
-      inputs.declare(&Trainer::depth_, "depth", "The 16bit depth image.").required(true);
-      inputs.declare(&Trainer::depth_mask_, "mask", "The mask for the depth.").required(true);
-      outputs.declare(&Trainer::R_, "R", "The matching rotation of the template");
-      outputs.declare(&Trainer::T_, "T", "The matching translation of the template.");
+      //inputs.declare(&Trainer::image_, "image", "An rgb full frame image.").required(true);
+      //inputs.declare(&Trainer::depth_, "depth", "The 16bit depth image.").required(true);
+      //inputs.declare(&Trainer::depth_mask_, "mask", "The mask for the depth.").required(true);
+      //outputs.declare(&Trainer::R_, "R", "The matching rotation of the template");
+      //outputs.declare(&Trainer::T_, "T", "The matching translation of the template.");
 
-      outputs.declare(&Trainer::depths_, "depths", "The matching rotations of the templates");
-      outputs.declare(&Trainer::images_, "images", "The matching rotations of the templates");
-      outputs.declare(&Trainer::masks_, "masks", "The matching rotations of the templates");
-      outputs.declare(&Trainer::Rs_, "Rs", "The matching rotations of the templates");
-      outputs.declare(&Trainer::Ts_, "Ts", "The matching translations of the templates.");
+      outputs.declare(&Trainer::detector_, "detector", "The LINE-MOD detector");
+      //outputs.declare(&Trainer::Rs_, "Rs", "The matching rotations of the templates");
+      //outputs.declare(&Trainer::Ts_, "Ts", "The matching translations of the templates.");
     }
 
     void
     configure(const tendrils& params, const tendrils& inputs, const tendrils& outputs)
     {
-      or_json::mValue submethod = object_recognition_core::to_json(*json_submethod_);
+      //or_json::mValue submethod = object_recognition_core::to_json(*json_submethod_);
     }
 
     int
     process(const tendrils& inputs, const tendrils& outputs)
     {
-      CV_Assert(depth_mask_->type() == CV_8UC1);
+      cv::Ptr < cv::linemod::Detector > detector_ptr = cv::linemod::getDefaultLINEMOD();
+      *detector_ = *detector_ptr;
 
-	  //applying Morph_open and Morph_close operators to clear a bit of noise in the mask
-	  cv::Mat tmp_depth_mask(depth_mask_->cols, depth_mask_->rows, depth_mask_->type());
-	  cv::Mat kernelOpen = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(7,7));
-	  cv::Mat kernelClose = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5,5));
-	  cv::morphologyEx(*depth_mask_, tmp_depth_mask, cv::MORPH_OPEN, kernelOpen, cv::Point(-1,-1), 1);
-	  cv::morphologyEx(tmp_depth_mask, tmp_depth_mask, cv::MORPH_CLOSE, kernelClose, cv::Point(-1,-1), 1);
+      for (unsigned int index = 1;; ++index)
+      {
+        std::cout << "Loading images " << index << std::endl;
+        if (index>=100)
+          break;
+        cv::Mat image, depth, mask;
 
-      // Figure out the interesting bounding box in the depth mask
-      int x_min = -1, x_max = depth_->cols, y_min = -1, y_max = depth_->rows;
-      bool rowIsZero = true;
-      // Figure out y_min
-      while (rowIsZero)
-      {
-        ++y_min;
-        for (uchar *row = &tmp_depth_mask.at < uchar > (y_min, 0), *row_end = row + tmp_depth_mask.cols; row != row_end;
-            ++row)
-          if (*row)
-          {
-            rowIsZero = false;
-            break;
-          }
-      }
-      // Figure out y_max
-      rowIsZero = true;
-      while (rowIsZero)
-      {
-        --y_max;
-        for (uchar *row = &tmp_depth_mask.at < uchar > (y_max, 0), *row_end = row + tmp_depth_mask.cols; row != row_end;
-            ++row)
-          if (*row)
-          {
-            rowIsZero = false;
-            break;
-          }
+        std::string depth_path = boost::str(boost::format((*path_) + "/depth_%05d.png") % (index));
+        std::string image_path = boost::str(boost::format((*path_) + "/image_%05d.png") % (index));
+        std::string mask_path = boost::str(boost::format((*path_) + "/mask_%05d.png") % (index));
+
+        // Make sure the files exist
+        if ((!boost::filesystem::exists(depth_path)) || (!boost::filesystem::exists(image_path))
+            || (!boost::filesystem::exists(mask_path)))
+          break;
+        depth = cv::imread(depth_path, CV_LOAD_IMAGE_ANYDEPTH);
+        image = cv::imread(image_path, CV_LOAD_IMAGE_COLOR);
+        mask = cv::imread(mask_path, CV_LOAD_IMAGE_GRAYSCALE);
+
+        std::vector<cv::Mat> sources;
+        sources.push_back(image);
+        sources.push_back(depth);
+
+        detector_->addTemplate(sources, "object1", mask);
+
+        //document.get_attachment < std::vector<cv::Mat> > ("Rs", Rs_[object_id]);
+        //document.get_attachment < std::vector<cv::Mat> > ("Ts", Ts_[object_id]);
       }
 
-      // Figure out x_min
-      bool colIsZero = true;
-      while (colIsZero)
-      {
-        ++x_min;
-        for (uchar *row = &tmp_depth_mask.at < uchar > (y_min, x_min), *row_end = &tmp_depth_mask.at < uchar
-            > (y_max, x_min); row != row_end; row += tmp_depth_mask.step)
-          if (*row)
-          {
-            colIsZero = false;
-            break;
-          }
-      }
-      // Figure out x_max
-      colIsZero = true;
-      while (colIsZero)
-      {
-        --x_max;
-        for (uchar *row = &tmp_depth_mask.at < uchar > (y_min, x_max), *row_end = &tmp_depth_mask.at < uchar
-            > (y_max, x_max); row != row_end; row += tmp_depth_mask.step)
-          if (*row)
-          {
-            colIsZero = false;
-            break;
-          }
-      }
-
-      cv::Rect area(x_min, y_min, x_max + 1 - x_min, y_max + 1 - y_min);
-
-      // Only save the interesting areas to the models
-      cv::Mat depth, image, mask;
-
-      cv::Range row_range = cv::Range(area.y, area.y + area.height), col_range = cv::Range(area.x, area.x + area.width);
-      cv::Range row_range_image = cv::Range((area.y * image_->cols) / tmp_depth_mask.cols,
-                                            ((area.y + area.height) * image_->cols) / tmp_depth_mask.cols),
-          col_range_image = cv::Range((area.x * image_->rows) / tmp_depth_mask.rows,
-                                      ((area.x + area.width) * image_->rows) / tmp_depth_mask.rows);
-
-      (*depth_)(row_range, col_range).copyTo(depth);
-      cv::resize((*image_)(row_range_image, col_range_image), image, cv::Size(area.width, area.height), 0.0, 0.0,
-                 CV_INTER_NN);
-      (tmp_depth_mask)(row_range, col_range).copyTo(mask);
-
-      depths_->push_back(depth);
-      images_->push_back(image);
-      masks_->push_back(mask);
-			
       // Also store the pose of each template
-      Rs_->push_back(*R_);
-      Ts_->push_back(*T_);
+      //Rs_->push_back(*R_);
+      //Ts_->push_back(*T_);
 
       return ecto::OK;
     }
 
-    spore<cv::Mat> image_, depth_, depth_mask_;
-    spore<std::vector<cv::Mat> > depths_;
-    spore<std::vector<cv::Mat> > images_;
-    spore<std::vector<cv::Mat> > masks_;
-    spore<std::vector<cv::Mat> > Rs_;
-    spore<std::vector<cv::Mat> > Ts_;
-    spore<cv::Mat> R_;
-    spore<cv::Mat> T_;
-    spore<std::string> json_submethod_;
+    spore<std::string> path_;
+    ecto::spore<cv::linemod::Detector> detector_;
+    //spore<std::vector<cv::Mat> > Rs_;
+    //spore<std::vector<cv::Mat> > Ts_;
+    //spore<std::string> json_submethod_;
   };
 } // namespace ecto_linemod
 

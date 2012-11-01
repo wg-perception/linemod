@@ -73,23 +73,23 @@ drawResponse(const std::vector<cv::linemod::Template>& templates, int num_modali
   }
 }
 
-struct LinemodDetector
+struct Detector
 {
   static void
   declare_params(tendrils& params)
   {
-    params.declare(&LinemodDetector::threshold_, "threshold", "Matching threshold, as a percentage", 90.0f);
+    params.declare(&Detector::threshold_, "threshold", "Matching threshold, as a percentage", 90.0f);
   }
 
   static void
   declare_io(const tendrils& params, tendrils& inputs, tendrils& outputs)
   {
-    inputs.declare(&LinemodDetector::color_, "image", "An rgb full frame image.");
-    inputs.declare(&LinemodDetector::depth_, "depth", "The 16bit depth image.");
+    inputs.declare(&Detector::color_, "image", "An rgb full frame image.");
+    inputs.declare(&Detector::depth_, "depth", "The 16bit depth image.");
 
-    outputs.declare(&LinemodDetector::out_, "image", "The found template.");
+    outputs.declare(&Detector::out_, "image", "The found template.");
 
-    //outputs.declare(&LinemodDetector::pose_results_, "pose_results", "The results of object recognition");
+    //outputs.declare(&Detector::pose_results_, "pose_results", "The results of object recognition");
   }
 
   void
@@ -193,5 +193,5 @@ struct LinemodDetector
   std::map<std::string, std::vector<cv::Mat> > Ts_;
 };
 
-ECTO_CELL(ecto_sample_linemod, LinemodDetector, "Detector",
+ECTO_CELL(ecto_sample_linemod, Detector, "Detector",
     "Use LINE-MOD for object detection.")

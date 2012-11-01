@@ -53,7 +53,7 @@ using object_recognition_core::db::ObjectDb;
 
 namespace ecto_linemod
 {
-  struct LinemodDetector: public object_recognition_core::db::bases::ModelReaderImpl
+  struct Detector: public object_recognition_core::db::bases::ModelReaderImpl
   {
     void
     ParameterCallback(const object_recognition_core::db::Documents & db_documents)
@@ -93,17 +93,17 @@ namespace ecto_linemod
     static void
     declare_params(tendrils& params)
     {
-      params.declare(&LinemodDetector::threshold_, "threshold", "Matching threshold, as a percentage", 90.0f);
-      params.declare(&LinemodDetector::db_, "db", "The DB").required(true);
+      params.declare(&Detector::threshold_, "threshold", "Matching threshold, as a percentage", 90.0f);
+      params.declare(&Detector::db_, "db", "The DB").required(true);
     }
 
     static void
     declare_io(const tendrils& params, tendrils& inputs, tendrils& outputs)
     {
-      inputs.declare(&LinemodDetector::color_, "image", "An rgb full frame image.");
-      inputs.declare(&LinemodDetector::depth_, "depth", "The 16bit depth image.");
+      inputs.declare(&Detector::color_, "image", "An rgb full frame image.");
+      inputs.declare(&Detector::depth_, "depth", "The 16bit depth image.");
 
-      outputs.declare(&LinemodDetector::pose_results_, "pose_results", "The results of object recognition");
+      outputs.declare(&Detector::pose_results_, "pose_results", "The results of object recognition");
     }
 
     void
@@ -160,5 +160,5 @@ namespace ecto_linemod
 
 } // namespace ecto_linemod
 
-ECTO_CELL(ecto_linemod, object_recognition_core::db::bases::ModelReaderBase<ecto_linemod::LinemodDetector>, "Detector",
+ECTO_CELL(ecto_linemod, object_recognition_core::db::bases::ModelReaderBase<ecto_linemod::Detector>, "Detector",
           "Use LINE-MOD for object detection.")
