@@ -40,8 +40,9 @@ from object_recognition_linemod.ecto_cells.ecto_linemod import Detector
 from ecto.opts import run_plasm, scheduler_options
 from object_recognition_linemod.detector import LinemodDetectionPipeline
 from object_recognition_core.utils.json_helper import dict_to_cpp_json_str, list_to_cpp_json_str
-from object_recognition_core.db import ObjectDb, ObjectDbParameters
+from object_recognition_core.db import ObjectDb, ObjectDbParameters, Models
 from ecto_image_pipeline.io.source import create_source
+from object_recognition_core.utils import json_helper
 
 def parse_args():
     import argparse
@@ -57,7 +58,7 @@ if __name__ == '__main__':
 
     plasm = ecto.Plasm()
 
-    db_params = ObjectDbParameters({'type': 'CouchDB', 'root': 'http://localhost:5984',
+    db_params = ObjectDbParameters({'type': 'CouchDB', 'root': 'http://bwl.willowgarage.com:5984',
                                         'collection': 'object_recognition'})
     object_db = ObjectDb(db_params)
 
@@ -65,13 +66,16 @@ if __name__ == '__main__':
     from ecto_openni import VGA_RES, FPS_30
     source = create_source('image_pipeline','OpenNISource',image_mode=VGA_RES,image_fps=FPS_30)
 
+    print LinemodDetectionPipeline.type_name()
     model_documents = Models(object_db, ['whoolite'], LinemodDetectionPipeline.type_name(), json_helper.dict_to_cpp_json_str('{}'))
-    dtector = Detector(model_documents=model_documents, db=object_db, threshold=90)
+    print len(model_documents)
+    detector = Detector(model_documents=model_documents, db=object_db, threshold=90)
 
     #connect up the pose_est
     plasm.connect(source['image'] >> detector['image'],
                   source['depth'] >> detector['depth']
                   )
     plasm.connect(detector['image'] >> imshow(name='result')[:])
+    plasm.connect(source['image'] >> imshow(name='source')[:])
 
     run_plasm(options, plasm, locals=vars())
