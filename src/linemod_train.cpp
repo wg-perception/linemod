@@ -92,8 +92,6 @@ namespace ecto_linemod
       for (unsigned int index = 1;; ++index)
       {
         std::cout << "Loading images " << index << std::endl;
-        if (index>=100)
-          break;
         cv::Mat image, depth, mask;
 
         std::string depth_path = boost::str(boost::format((*path_) + "/depth_%05d.png") % (index));
