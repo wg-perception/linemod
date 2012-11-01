@@ -141,9 +141,10 @@ namespace ecto_linemod
       std::vector<cv::linemod::Match> matches;
       detector_.match(sources, *threshold_, matches);
       pose_results_->clear();
-      cv::Mat display;
+      cv::Mat display = color;
       int num_modalities = (int)detector_.getModalities().size();
 
+      //std::cout << matches.size() << std::endl;
       BOOST_FOREACH(const cv::linemod::Match & match, matches)
       {
         const std::vector<cv::linemod::Template>& templates = detector_.getTemplates(match.class_id, match.template_id);
