@@ -50,6 +50,8 @@ using object_recognition_core::db::ObjectId;
 using object_recognition_core::common::PoseResult;
 using object_recognition_core::db::ObjectDb;
 
+#define LINE2D 0
+
 void
 drawResponse(const std::vector<cv::linemod::Template>& templates, int num_modalities, cv::Mat& dst, cv::Point offset,
              int T)
@@ -100,10 +102,16 @@ struct Detector
      else
      throw std::runtime_error("Unsupported method. Supported ones are: DefaultLINEMOD");*/
 
+#if LINE2D
+    detector_ = cv::linemod::getDefaultLINE();
+    *threshold_ = 85;
+#else
     detector_ = cv::linemod::getDefaultLINEMOD();
+    *threshold_ = 85;
+#endif
 
-    unsigned int index = 0;
-    while (index <= 100)
+    unsigned int index = 1;
+    while (index <= 400)
     {
       cv::Mat image, depth, mask;
       std::cout << index << std::endl;
@@ -116,13 +124,11 @@ struct Detector
       mask = cv::imread(boost::str(boost::format("/home/vrabaud/tmp/first/mask_%05d.png") % (index)),
                         CV_LOAD_IMAGE_GRAYSCALE);
 
-      std::cout << depth.depth() << " " << depth.type() << " " << depth.cols << std::endl;
-      std::cout << image.depth() << " " << image.type() << " " << image.cols << std::endl;
-      std::cout << mask.depth() << " " << mask.type() << " " << mask.cols << std::endl;
-
       std::vector<cv::Mat> sources;
       sources.push_back(image);
+#if not LINE2D
       sources.push_back(depth);
+#endif
 
       try
       {
@@ -154,7 +160,9 @@ struct Detector
 
     std::vector<cv::Mat> sources;
     sources.push_back(color);
+#if not LINE2D
     sources.push_back(*depth_);
+#endif
 
     std::vector<cv::linemod::Match> matches;
     detector_->match(sources, *threshold_, matches);
@@ -162,6 +170,7 @@ struct Detector
     cv::Mat display;
     color.copyTo(display);
     int num_modalities = (int)detector_->getModalities().size();
+
     BOOST_FOREACH(const cv::linemod::Match & match, matches){
     /// @todo Where do R and T come from? Can associate with matches[0].template_id
     const std::vector<cv::linemod::Template>& templates = detector_->getTemplates(match.class_id, match.template_id);
