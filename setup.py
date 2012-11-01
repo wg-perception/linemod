@@ -1,9 +1,11 @@
 #!/usr/bin/env python
-from distutils.core import setup
 
-setup(name='object_recognition_linemod',
-      version='1.0.0',
-      description='A pipeline for object recognition using LINE-MOD from OpenCV',
-      packages=['object_recognition_linemod'],
-      package_dir={'':'python'}
-)
+from distutils.core import setup
+from ecto.package import parse_package_for_distutils
+
+d = parse_package_for_distutils()
+d['packages'] = ['object_recognition_linemod']
+d['package_dir'] = {'': 'python'}
+d['install_requires'] = []
+
+setup(**d)
