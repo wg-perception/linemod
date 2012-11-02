@@ -75,7 +75,17 @@ if __name__ == '__main__':
     plasm.connect(source['image'] >> detector['image'],
                   source['depth'] >> detector['depth']
                   )
-    plasm.connect(detector['image'] >> imshow(name='result')[:])
+    #plasm.connect(detector['image'] >> imshow(name='result')[:])
     plasm.connect(source['image'] >> imshow(name='source')[:])
+
+    if 1:
+        import ecto_ros
+        import ecto_ros.ecto_sensor_msgs
+        import sys
+        ecto_ros.init(sys.argv, "image_pub")
+        mat2image = ecto_ros.Mat2Image(frame_id='base', encoding='bgr8')
+        pub_rgb = ecto_ros.ecto_sensor_msgs.Publisher_Image("image pub", topic_name='linemod_image')
+        plasm.connect(detector['image'] >> mat2image[:],
+                      mat2image[:] >> pub_rgb[:])
 
     run_plasm(options, plasm, locals=vars())
