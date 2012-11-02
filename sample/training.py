@@ -67,7 +67,7 @@ if __name__ == '__main__':
     object_id = 'whoolite'
     writer = ModelWriter(session_ids=list_to_cpp_json_str([]),
                         object_id=object_id, db_params=ObjectDbParameters({'type': 'CouchDB',
-                                                                              'root': 'http://localhost:5984',
+                                                                              'root': 'http://bwl.willowgarage.com:5984',
                                                                               'collection': 'object_recognition'}),
                         method=LinemodDetectionPipeline.type_name(),
                         json_submethod=dict_to_cpp_json_str({}),

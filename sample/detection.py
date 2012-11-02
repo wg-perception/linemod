@@ -67,7 +67,8 @@ if __name__ == '__main__':
     source = create_source('image_pipeline','OpenNISource',image_mode=VGA_RES,image_fps=FPS_30)
 
     print LinemodDetectionPipeline.type_name()
-    model_documents = Models(object_db, ['whoolite'], LinemodDetectionPipeline.type_name(), json_helper.dict_to_cpp_json_str({}))
+    object_id = 'whoolite'
+    model_documents = Models(object_db, [object_id], LinemodDetectionPipeline.type_name(), json_helper.dict_to_cpp_json_str({}))
     print len(model_documents)
     detector = Detector(model_documents=model_documents, db=object_db, threshold=90)
 
