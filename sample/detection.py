@@ -67,8 +67,8 @@ if __name__ == '__main__':
     source = create_source('image_pipeline','OpenNISource',image_mode=VGA_RES,image_fps=FPS_30)
 
     print LinemodDetectionPipeline.type_name()
-    object_id = 'whoolite'
-    model_documents = Models(object_db, [object_id], LinemodDetectionPipeline.type_name(), json_helper.dict_to_cpp_json_str({}))
+    object_ids = ['whoolite', 'tilex']
+    model_documents = Models(object_db, object_ids, LinemodDetectionPipeline.type_name(), json_helper.dict_to_cpp_json_str({}))
     print len(model_documents)
     detector = Detector(model_documents=model_documents, db=object_db, threshold=90)
 
@@ -76,10 +76,9 @@ if __name__ == '__main__':
     plasm.connect(source['image'] >> detector['image'],
                   source['depth'] >> detector['depth']
                   )
-    #plasm.connect(detector['image'] >> imshow(name='result')[:])
     plasm.connect(source['image'] >> imshow(name='source')[:])
 
-    if 1:
+    if 0:
         import ecto_ros
         import ecto_ros.ecto_sensor_msgs
         import sys
@@ -88,5 +87,7 @@ if __name__ == '__main__':
         pub_rgb = ecto_ros.ecto_sensor_msgs.Publisher_Image("image pub", topic_name='linemod_image')
         plasm.connect(detector['image'] >> mat2image[:],
                       mat2image[:] >> pub_rgb[:])
+    else:
+        plasm.connect(detector['image'] >> imshow(name='result')[:])
 
     run_plasm(options, plasm, locals=vars())
