@@ -64,8 +64,9 @@ if __name__ == '__main__':
     #connect up the pose_est
     plasm.connect(trainer['detector'] >>  model_filler['detector'])
 
+    object_id = 'whoolite'
     writer = ModelWriter(session_ids=list_to_cpp_json_str([]),
-                        object_id='whoolite', db_params=ObjectDbParameters({'type': 'CouchDB',
+                        object_id=object_id, db_params=ObjectDbParameters({'type': 'CouchDB',
                                                                               'root': 'http://localhost:5984',
                                                                               'collection': 'object_recognition'}),
                         method=LinemodDetectionPipeline.type_name(),
