@@ -8,6 +8,9 @@ install(FILES ${CATKIN_BUILD_PREFIX}/${CATKIN_PACKAGE_PYTHON_DESTINATION}/ecto_c
         DESTINATION ${CATKIN_PACKAGE_PYTHON_DESTINATION}/ecto_cells
 )
 else()
+
+set(ECTO_PYTHON_BUILD_PATH ${CMAKE_BINARY_DIR}/gen/py/)
+
 configure_file(__init__.py.plain.in
                ${ECTO_PYTHON_BUILD_PATH}/${PROJECT_NAME}/ecto_cells/__init__.py
                @ONLY
