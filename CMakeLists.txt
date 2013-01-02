@@ -1,17 +1,18 @@
 cmake_minimum_required(VERSION 2.8)
 project(object_recognition_linemod)
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED object_recognition_renderer)
+
 if (${catkin_VERSION} VERSION_GREATER "0.5.28")
-catkin_package()
+catkin_package(DEPENDS object_recognition_renderer)
 else()
 catkin_stack()
-catkin_project(object_recognition_linemod)
+catkin_project(object_recognition_linemod DEPENDS object_recognition_renderer)
 endif()
 
 #install targets for all things python
 catkin_python_setup()
 
-find_package(ecto REQUIRED)
+include_directories(${catkin_INCLUDE_DIRS})
 
 # Compile the module
 add_subdirectory(python)

@@ -33,19 +33,18 @@
  *
  */
 
+#include <iostream>
+#include <vector>
+
 #include <ecto/ecto.hpp>
 
-#include <boost/filesystem.hpp>
-#include <boost/format.hpp>
-
-#include <object_recognition_core/common/json.hpp>
-
 #include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
-#include "opencv2/highgui/highgui.hpp"
 
-#include <iostream>
+#include <object_recognition_core/common/json.hpp>
+#include <object_recognition_renderer/renderer_osmesa.h>
 
 using ecto::tendrils;
 using ecto::spore;
@@ -58,23 +57,18 @@ namespace ecto_linemod
     declare_params(tendrils& params)
     {
       /// @todo Parameters for various LINE-MOD settings?
-      params.declare(&Trainer::path_, "path", "The path to where the temporary images are.").required(true);
-      //params.declare(&Trainer::json_submethod_, "json_submethod", "The submethod to use, as a JSON string.").required(
-      //  true);
+      params.declare(&Trainer::path_, "path", "The path to where the mesh to generate templates from is.").required(
+          true);
+      params.declare(&Trainer::json_submethod_, "json_submethod", "The submethod to use, as a JSON string.").required(
+          true);
     }
 
     static void
     declare_io(const tendrils& params, tendrils& inputs, tendrils& outputs)
     {
-      //inputs.declare(&Trainer::image_, "image", "An rgb full frame image.").required(true);
-      //inputs.declare(&Trainer::depth_, "depth", "The 16bit depth image.").required(true);
-      //inputs.declare(&Trainer::depth_mask_, "mask", "The mask for the depth.").required(true);
-      //outputs.declare(&Trainer::R_, "R", "The matching rotation of the template");
-      //outputs.declare(&Trainer::T_, "T", "The matching translation of the template.");
-
       outputs.declare(&Trainer::detector_, "detector", "The LINE-MOD detector");
-      //outputs.declare(&Trainer::Rs_, "Rs", "The matching rotations of the templates");
-      //outputs.declare(&Trainer::Ts_, "Ts", "The matching translations of the templates.");
+      outputs.declare(&Trainer::Rs_, "Rs", "The matching rotations of the templates");
+      outputs.declare(&Trainer::Ts_, "Ts", "The matching translations of the templates.");
     }
 
     void
@@ -86,48 +80,54 @@ namespace ecto_linemod
     int
     process(const tendrils& inputs, const tendrils& outputs)
     {
-      cv::Ptr < cv::linemod::Detector > detector_ptr = cv::linemod::getDefaultLINEMOD();
+      cv::Ptr<cv::linemod::Detector> detector_ptr = cv::linemod::getDefaultLINEMOD();
       *detector_ = *detector_ptr;
 
-      for (unsigned int index = 1;; ++index)
+      // Define the display
+      size_t width = 640, height = 480;
+      double near = 0.1, far = 1000;
+      double focal_length_x = 525, focal_length_y = 525;
+
+      // the model name can be specified on the command line.
+      RendererOSMesa renderer = RendererOSMesa(*path_);
+
+      renderer.set_parameters(width, height, focal_length_x, focal_length_y, near, far);
+
+      RendererIterator renderer_iterator = RendererIterator(&renderer, 150);
+
+      cv::Mat image, depth, mask;
+      cv::Mat_<unsigned short> depth_short;
+      cv::Matx33d R;
+      cv::Vec3d T;
+      for (size_t i = 0; !renderer_iterator.isDone(); ++i, ++renderer_iterator)
       {
-        std::cout << "Loading images " << index << std::endl;
-        cv::Mat image, depth, mask;
+        std::cout << "Loading images " << i << std::endl;
 
-        std::string depth_path = boost::str(boost::format((*path_) + "/depth_%05d.png") % (index));
-        std::string image_path = boost::str(boost::format((*path_) + "/image_%05d.png") % (index));
-        std::string mask_path = boost::str(boost::format((*path_) + "/mask_%05d.png") % (index));
+        renderer_iterator.render(image, depth, mask);
+        R = renderer_iterator.R();
+        T = renderer_iterator.T();
 
-        // Make sure the files exist
-        if ((!boost::filesystem::exists(depth_path)) || (!boost::filesystem::exists(image_path))
-            || (!boost::filesystem::exists(mask_path)))
-          break;
-        depth = cv::imread(depth_path, CV_LOAD_IMAGE_ANYDEPTH);
-        image = cv::imread(image_path, CV_LOAD_IMAGE_COLOR);
-        mask = cv::imread(mask_path, CV_LOAD_IMAGE_GRAYSCALE);
+        depth.convertTo(depth_short, CV_16U, 1000);
 
-        std::vector<cv::Mat> sources;
-        sources.push_back(image);
-        sources.push_back(depth);
+        std::vector<cv::Mat> sources(2);
+        sources[0] = image;
+        sources[1] = depth;
 
         detector_->addTemplate(sources, "object1", mask);
 
-        //document.get_attachment < std::vector<cv::Mat> > ("Rs", Rs_[object_id]);
-        //document.get_attachment < std::vector<cv::Mat> > ("Ts", Ts_[object_id]);
+        // Also store the pose of each template
+        Rs_->push_back(cv::Mat(R));
+        Ts_->push_back(cv::Mat(T));
       }
-
-      // Also store the pose of each template
-      //Rs_->push_back(*R_);
-      //Ts_->push_back(*T_);
 
       return ecto::OK;
     }
 
     spore<std::string> path_;
     ecto::spore<cv::linemod::Detector> detector_;
-    //spore<std::vector<cv::Mat> > Rs_;
-    //spore<std::vector<cv::Mat> > Ts_;
-    //spore<std::string> json_submethod_;
+    spore<std::vector<cv::Mat> > Rs_;
+    spore<std::vector<cv::Mat> > Ts_;
+    spore<std::string> json_submethod_;
   };
 } // namespace ecto_linemod
 
