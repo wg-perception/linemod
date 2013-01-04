@@ -20,10 +20,9 @@ class LinemodTrainingPipeline(TrainingPipeline):
     @classmethod
     def incremental_model_builder(cls, *args, **kwargs):
         submethod = kwargs.get('submethod')
-        return ecto_linemod.Trainer(json_submethod=dict_to_cpp_json_str(submethod))
+        mesh_path = kwargs.get('pipeline_params').get('path')
+        return ecto_linemod.Trainer(path=mesh_path, json_submethod=dict_to_cpp_json_str(submethod))
 
     @classmethod
     def post_processor(cls, *args, **kwargs):
-        #if not search_params:
-        #    raise RuntimeError("You must supply search parameters for TOD.")
         return ecto_linemod.ModelFiller()

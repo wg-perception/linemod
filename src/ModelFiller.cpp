@@ -54,8 +54,8 @@ namespace linemod_ecto
     {
       typedef ModelFiller C;
       inputs.declare(&C::detector_, "detector", "The LINE-MOD detector");
-      //inputs.declare(&C::Rs_, "Rs", "The matching rotations of the templates");
-      //inputs.declare(&C::Ts_, "Ts", "The matching translations of the templates.");
+      inputs.declare(&C::Rs_, "Rs", "The matching rotations of the templates");
+      inputs.declare(&C::Ts_, "Ts", "The matching translations of the templates.");
 
       outputs.declare(&C::db_document_, "db_document", "The filled document.");
     }
@@ -64,18 +64,18 @@ namespace linemod_ecto
     process(const ecto::tendrils& inputs, const ecto::tendrils& outputs)
     {
       db_document_->set_attachment < cv::linemod::Detector > ("detector", *detector_);
-      //db_document_->set_attachment<std::vector<cv::Mat> >("Rs", *Rs_);
-      //db_document_->set_attachment<std::vector<cv::Mat> >("Ts", *Ts_);
+      db_document_->set_attachment<std::vector<cv::Mat> >("Rs", *Rs_);
+      db_document_->set_attachment<std::vector<cv::Mat> >("Ts", *Ts_);
       return ecto::OK;
     }
 
   private:
     ecto::spore<cv::linemod::Detector> detector_;
     ecto::spore<Document> db_document_;
-    //ecto::spore<std::vector<cv::Mat> > Rs_;
-    //ecto::spore<std::vector<cv::Mat> > Ts_;
+    ecto::spore<std::vector<cv::Mat> > Rs_;
+    ecto::spore<std::vector<cv::Mat> > Ts_;
   };
 }
 
 ECTO_CELL(ecto_linemod, linemod_ecto::ModelFiller, "ModelFiller",
-    "Populates a db document with a TOD model for persisting a later date.")
+          "Populates a db document with a TOD model for persisting a later date.")

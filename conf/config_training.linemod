@@ -5,6 +5,7 @@ pipeline1:
   parameters:
     # The list of object_ids to analyze
     object_ids: 'all'
+    path: '/foo/bar.obj'
     db:
       type: 'CouchDB'
       root: 'http://localhost:5984'
