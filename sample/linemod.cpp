@@ -48,7 +48,6 @@ using ecto::tendrils;
 using ecto::spore;
 using object_recognition_core::db::ObjectId;
 using object_recognition_core::common::PoseResult;
-using object_recognition_core::db::ObjectDb;
 
 #define LINE2D 0
 

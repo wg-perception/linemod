@@ -49,7 +49,7 @@ using ecto::tendrils;
 using ecto::spore;
 using object_recognition_core::db::ObjectId;
 using object_recognition_core::common::PoseResult;
-using object_recognition_core::db::ObjectDb;
+using object_recognition_core::db::ObjectDbPtr;
 
 void
 drawResponse(const std::vector<cv::linemod::Template>& templates, int num_modalities, cv::Mat& dst, cv::Point offset,
@@ -183,7 +183,7 @@ namespace ecto_linemod
     /** The object recognition results */
     ecto::spore<std::vector<PoseResult> > pose_results_;
     /** The DB parameters */
-    ecto::spore<ObjectDb> db_;
+    ecto::spore<ObjectDbPtr> db_;
     ecto::spore<cv::Mat> out_;
     /** The rotations, per object and per template */
     //std::map<std::string, std::vector<cv::Mat> > Rs_;
