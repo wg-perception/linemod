@@ -1,2 +1,2 @@
-from detector import *
-from trainer import *
+from .detector import LinemodDetector
+from .trainer import *

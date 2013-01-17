@@ -3,35 +3,13 @@
 Module defining the LINE-MOD detector to find objects in a scene
 """
 
-from object_recognition_core.db import ObjectDb, Models
-from object_recognition_core.utils import json_helper
-from object_recognition_core.pipelines.detection import DetectionPipeline
+from object_recognition_core.pipelines.detection import DetectorBase
 import ecto_cells.ecto_linemod as ecto_linemod
 
 ########################################################################################################################
 
-class LinemodDetectionPipeline(DetectionPipeline):
+class LinemodDetector(ecto_linemod.Detector, DetectorBase):
 
-    @classmethod
-    def config_doc(cls):
-        return  """
-                    parameters:
-                        # The path of the 'registrationMask_SXGA.png' given in the conf folder
-                        registrationMaskFilename: '/tmp/registrationMask_SXGA.png'
-                        # The usual parameters for the DB
-                        db:
-        """
-
-    @classmethod
-    def type_name(cls):
-        return 'LINEMOD'
-    @classmethod
-    def detector(self, *args, **kwargs):
-        #visualize = args.get('visualize', False)
-        submethod = kwargs.get('submethod')
-        parameters = kwargs.get('parameters')
-        object_ids = parameters['object_ids']
-        object_db = ObjectDb(parameters['db'])
-        model_documents = Models(object_db, object_ids, self.type_name(), json_helper.dict_to_cpp_json_str(submethod))
-        threshold = parameters.get('threshold', 90)
-        return ecto_linemod.Detector(model_documents=model_documents, db=object_db, threshold=threshold)
+    def __init__(self, *args, **kwargs):
+        ecto_linemod.Detector.__init__(self, *args, **kwargs)
+        DetectorBase.__init__(self)

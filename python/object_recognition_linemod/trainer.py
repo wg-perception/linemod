@@ -3,26 +3,43 @@
 Module defining the LINE-MOD trainer to train the LINE-MOD models
 """
 
-from object_recognition_core.pipelines.training import TrainingPipeline
-from object_recognition_core.utils.json_helper import dict_to_cpp_json_str
+from ecto import BlackBoxCellInfo as CellInfo, BlackBoxForward as Forward
+from object_recognition_core.ecto_cells.db import ModelWriter
+from object_recognition_core.pipelines.training import TrainerBase
 import ecto
 import ecto_cells.ecto_linemod as ecto_linemod
 
 ########################################################################################################################
 
-class LinemodTrainingPipeline(TrainingPipeline):
+class LinemodTrainer(ecto.BlackBox, TrainerBase):
     '''Implements the training pipeline functions'''
 
-    @classmethod
-    def type_name(cls):
-        return "LINEMOD"
+    def __init__(self, *args, **kwargs):
+        ecto.BlackBox.__init__(self, *args, **kwargs)
+        TrainerBase.__init__(self, *args, **kwargs)
 
     @classmethod
-    def incremental_model_builder(cls, *args, **kwargs):
-        submethod = kwargs.get('submethod')
-        mesh_path = kwargs.get('pipeline_params').get('path')
-        return ecto_linemod.Trainer(path=mesh_path, json_submethod=dict_to_cpp_json_str(submethod))
+    def declare_cells(cls, _p):
+        return {'trainer': CellInfo(ecto_linemod.Trainer),
+                'model_filler': CellInfo(ecto_linemod.ModelFiller)}
 
     @classmethod
-    def post_processor(cls, *args, **kwargs):
-        return ecto_linemod.ModelFiller()
+    def declare_forwards(cls, _p):
+        p = {'trainer': 'all'}
+        i = {}
+        o = {}
+
+        return (p, i, o)
+
+    def connections(self, _p):
+        connections = []
+        self.model_writer = ModelWriter()
+
+        # connect the output to the post-processor
+        for key in set(self.trainer.outputs.keys()).intersection(self.model_filler.inputs.keys()):
+            connections += [self.trainer[key] >> self.model_filler[key]]
+
+        # and write everything to the DB
+        connections += [self.model_filler["db_document"] >> self.model_writer["db_document"]]
+
+        return connections

@@ -1,17 +1,17 @@
 # info about the db
 
 source1:
-  type: ros_kinect
+  type: RosKinect
   module: 'object_recognition_ros.io'
 #  rgb_frame_id: '/camera_rgb_optical_frame'
 #  bag: /home/vrabaud/tod_data_new/training/object_recognition_capture/eggo_01.bag
 
 sink1:
-  type: publisher
+  type: Publisher
   module: 'object_recognition_ros.io'
 
 pipeline1:
-  type: 'LINEMOD'
+  type: LinemodDetector
   module: 'object_recognition_linemod'
   subtype: 'DefaultLINEMOD'
   sources: [source1]

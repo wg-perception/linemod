@@ -1,5 +1,5 @@
 pipeline1:
-  type: 'LINEMOD'
+  type: LinemodTrainer
   module: 'object_recognition_linemod'
   subtype: 'DefaultLINEMOD'
   parameters:

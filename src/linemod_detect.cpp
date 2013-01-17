@@ -76,10 +76,10 @@ drawResponse(const std::vector<cv::linemod::Template>& templates, int num_modali
 
 namespace ecto_linemod
 {
-  struct Detector: public object_recognition_core::db::bases::ModelReaderImpl
+  struct Detector: public object_recognition_core::db::bases::ModelReaderBase
   {
     void
-    ParameterCallback(const object_recognition_core::db::Documents & db_documents)
+    parameter_callback(const object_recognition_core::db::Documents & db_documents)
     {
       /*if (submethod.get_str() == "DefaultLINEMOD")
        detector_ = cv::linemod::getDefaultLINEMOD();
@@ -116,8 +116,8 @@ namespace ecto_linemod
     static void
     declare_params(tendrils& params)
     {
+      object_recognition_core::db::bases::declare_params_impl(params);
       params.declare(&Detector::threshold_, "threshold", "Matching threshold, as a percentage", 90.0f);
-      params.declare(&Detector::db_, "db", "The DB").required(true);
     }
 
     static void
@@ -133,6 +133,7 @@ namespace ecto_linemod
     void
     configure(const tendrils& params, const tendrils& inputs, const tendrils& outputs)
     {
+      configure_impl();
     }
 
     int
@@ -193,5 +194,4 @@ namespace ecto_linemod
 
 } // namespace ecto_linemod
 
-ECTO_CELL(ecto_linemod, object_recognition_core::db::bases::ModelReaderBase<ecto_linemod::Detector>, "Detector",
-    "Use LINE-MOD for object detection.")
+ECTO_CELL(ecto_linemod, ecto_linemod::Detector, "Detector", "Use LINE-MOD for object detection.")
