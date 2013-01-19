@@ -7,10 +7,11 @@ catkin_package(DEPENDS object_recognition_core object_recognition_renderer)
 else()
 catkin_stack()
 catkin_project(object_recognition_linemod DEPENDS object_recognition_core object_recognition_renderer)
+find_package(ecto)
 find_package(object_recognition_core)
 find_package(object_recognition_renderer)
-list(APPEND catkin_INCLUDE_DIRS ${object_recognition_core_INCLUDE_DIRS} ${object_recognition_renderer_INCLUDE_DIRS})
-list(APPEND catkin_LIBRARIES ${object_recognition_core_LIBRARIES} ${object_recognition_renderer_LIBRARIES})
+list(APPEND catkin_INCLUDE_DIRS ${ecto_INCLUDE_DIRS} ${object_recognition_core_INCLUDE_DIRS} ${object_recognition_renderer_INCLUDE_DIRS})
+list(APPEND catkin_LIBRARIES ${ecto_LIBRARIES} ${object_recognition_core_LIBRARIES} ${object_recognition_renderer_LIBRARIES})
 endif()
 
 #install targets for all things python
