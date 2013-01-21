@@ -1,24 +1,38 @@
 cmake_minimum_required(VERSION 2.8)
 project(object_recognition_linemod)
-find_package(catkin REQUIRED object_recognition_core object_recognition_renderer)
+
+find_package(catkin)
 
 if (${catkin_VERSION} VERSION_GREATER "0.5.28")
-catkin_package(DEPENDS object_recognition_core object_recognition_renderer)
+find_package(catkin REQUIRED object_recognition_core object_recognition_renderer)
+catkin_package(CATKIN_DEPENDS ecto object_recognition_core object_recognition_renderer
+               DEPENDS OpenCV
+)
 else()
+find_package(ROS REQUIRED ecto object_recognition_core object_recognition_renderer)
 catkin_stack()
 catkin_project(object_recognition_linemod DEPENDS object_recognition_core object_recognition_renderer)
-find_package(ecto)
-find_package(object_recognition_core)
-find_package(object_recognition_renderer)
-list(APPEND catkin_INCLUDE_DIRS ${ecto_INCLUDE_DIRS} ${object_recognition_core_INCLUDE_DIRS} ${object_recognition_renderer_INCLUDE_DIRS})
-list(APPEND catkin_LIBRARIES ${ecto_LIBRARIES} ${object_recognition_core_LIBRARIES} ${object_recognition_renderer_LIBRARIES})
+set(catkin_LIBRARIES ${ROS_LIBRARIES})
+set(catkin_INCLUDE_DIRS ${ROS_INCLUDE_DIRS})
+set(CATKIN_DEVEL_PREFIX CMAKE_BINARY_DIR)
+set(CATKIN_PACKAGE_BIN_DESTINATION share/${PROJECT_NAME}/bin)
+set(CATKIN_PACKAGE_INCLUDE_DESTINATION include/${PROJECT_NAME})
+set(CATKIN_PACKAGE_LIB_DESTINATION lib)
+set(CATKIN_PACKAGE_PYTHON_BUILD_DESTINATION gen/py/${PROJECT_NAME}/)
+set(CATKIN_PACKAGE_PYTHON_DESTINATION ${INSTALLED_PYTHONPATH}/${PROJECT_NAME}/)
+set(CATKIN_PACKAGE_SHARE_DESTINATION share/${PROJECT_NAME}/)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 endif()
 
 #install targets for all things python
 catkin_python_setup()
 
+find_package(OpenCV REQUIRED)
+
 include_directories(include)
-include_directories(SYSTEM ${catkin_INCLUDE_DIRS})
+include_directories(SYSTEM ${catkin_INCLUDE_DIRS}
+                           ${OpenCV_INCLUDE_DIRS}
+)
 
 # Compile the module
 add_subdirectory(python)

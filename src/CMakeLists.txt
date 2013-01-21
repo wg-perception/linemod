@@ -1,5 +1,3 @@
-find_package(OpenCV REQUIRED)
-
 # Compile the ecto 
 ectomodule(ecto_linemod DESTINATION ${PROJECT_NAME}/ecto_cells
                         INSTALL
