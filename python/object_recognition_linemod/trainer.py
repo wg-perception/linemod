@@ -20,12 +20,13 @@ class LinemodTrainer(ecto.BlackBox, TrainerBase):
 
     @classmethod
     def declare_cells(cls, _p):
-        return {'trainer': CellInfo(ecto_linemod.Trainer),
-                'model_filler': CellInfo(ecto_linemod.ModelFiller)}
+        return {'model_filler': CellInfo(ecto_linemod.ModelFiller),
+                'model_writer': CellInfo(ModelWriter),
+                'trainer': CellInfo(ecto_linemod.Trainer)}
 
     @classmethod
     def declare_forwards(cls, _p):
-        p = {'trainer': 'all'}
+        p = {'model_writer': 'all', 'trainer': 'all'}
         i = {}
         o = {}
 
@@ -33,7 +34,6 @@ class LinemodTrainer(ecto.BlackBox, TrainerBase):
 
     def connections(self, _p):
         connections = []
-        self.model_writer = ModelWriter()
 
         # connect the output to the post-processor
         for key in set(self.trainer.outputs.keys()).intersection(self.model_filler.inputs.keys()):

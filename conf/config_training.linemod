@@ -1,11 +1,10 @@
 pipeline1:
   type: LinemodTrainer
   module: 'object_recognition_linemod'
-  subtype: 'DefaultLINEMOD'
+  subtype: 'default'
   parameters:
     # The list of object_ids to analyze
     object_ids: 'all'
-    path: '/foo/bar.obj'
     db:
       type: 'CouchDB'
       root: 'http://localhost:5984'

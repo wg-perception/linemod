@@ -57,9 +57,7 @@ namespace ecto_linemod
     declare_params(tendrils& params)
     {
       /// @todo Parameters for various LINE-MOD settings?
-      params.declare(&Trainer::path_, "path", "The path to where the mesh to generate templates from is.").required(
-          true);
-      params.declare(&Trainer::json_submethod_, "json_submethod", "The submethod to use, as a JSON string.").required(
+      params.declare(&Trainer::object_id_, "object_id", "The path to where the mesh to generate templates from is.").required(
           true);
     }
 
@@ -88,8 +86,11 @@ namespace ecto_linemod
       double near = 0.1, far = 1000;
       double focal_length_x = 525, focal_length_y = 525;
 
+      // TODO, load the mesh from the DB
+
       // the model name can be specified on the command line.
-      RendererOSMesa renderer = RendererOSMesa(*path_);
+      std::string path;
+      RendererOSMesa renderer = RendererOSMesa(path);
 
       renderer.set_parameters(width, height, focal_length_x, focal_length_y, near, far);
 
@@ -123,11 +124,10 @@ namespace ecto_linemod
       return ecto::OK;
     }
 
-    spore<std::string> path_;
+    spore<std::string> object_id_;
     ecto::spore<cv::linemod::Detector> detector_;
     spore<std::vector<cv::Mat> > Rs_;
     spore<std::vector<cv::Mat> > Ts_;
-    spore<std::string> json_submethod_;
   };
 } // namespace ecto_linemod
 
