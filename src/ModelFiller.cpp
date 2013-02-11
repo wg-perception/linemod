@@ -63,10 +63,15 @@ namespace linemod_ecto
     int
     process(const ecto::tendrils& inputs, const ecto::tendrils& outputs)
     {
-      db_document_->set_attachment < cv::linemod::Detector > ("detector", *detector_);
-      db_document_->set_attachment<std::vector<cv::Mat> >("Rs", *Rs_);
-      db_document_->set_attachment<std::vector<cv::Mat> >("Ts", *Ts_);
-      return ecto::OK;
+    Document db_document;
+
+    db_document.set_attachment<cv::linemod::Detector>("detector", *detector_);
+    db_document.set_attachment<std::vector<cv::Mat> >("Rs", *Rs_);
+    db_document.set_attachment<std::vector<cv::Mat> >("Ts", *Ts_);
+
+    *db_document_ = db_document;
+
+    return ecto::OK;
     }
 
   private:
