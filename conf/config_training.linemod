@@ -1,6 +1,7 @@
 pipeline1:
   type: LinemodTrainer
   module: 'object_recognition_linemod'
+  method: LINEMOD
   subtype: 'default'
   parameters:
     # The list of object_ids to analyze
