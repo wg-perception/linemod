@@ -37,8 +37,9 @@
 
 #include <boost/foreach.hpp>
 
-#include <opencv2/objdetect/objdetect.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/objdetect/objdetect.hpp>
 
 #include <object_recognition_core/db/ModelReader.h>
 #include <object_recognition_core/common/pose_result.h>
@@ -76,48 +77,41 @@ drawResponse(const std::vector<cv::linemod::Template>& templates, int num_modali
 
 namespace ecto_linemod
 {
-  struct Detector: public object_recognition_core::db::bases::ModelReaderBase
-  {
-    void
-    parameter_callback(const object_recognition_core::db::Documents & db_documents)
-    {
-      /*if (submethod.get_str() == "DefaultLINEMOD")
-       detector_ = cv::linemod::getDefaultLINEMOD();
-       else
-       throw std::runtime_error("Unsupported method. Supported ones are: DefaultLINEMOD");*/
+struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
+  void parameter_callback(
+      const object_recognition_core::db::Documents & db_documents) {
+    /*if (submethod.get_str() == "DefaultLINEMOD")
+     detector_ = cv::linemod::getDefaultLINEMOD();
+     else
+     throw std::runtime_error("Unsupported method. Supported ones are: DefaultLINEMOD");*/
 
-      bool is_first = true;
-      BOOST_FOREACH(const object_recognition_core::db::Document & document, db_documents)
-      {
-        std::string object_id = document.get_value < ObjectId > ("object_id");
+    detector_ = cv::linemod::getDefaultLINEMOD();
+    BOOST_FOREACH(const object_recognition_core::db::Document & document, db_documents) {
+      std::string object_id = document.get_value<ObjectId>("object_id");
 
-        if (is_first) {
-          is_first = false;
-          document.get_attachment < cv::linemod::Detector > ("detector", detector_);
-          printf("Loaded %s\n", object_id.c_str());
-          continue;
-        }
+      // Load the detector for that class
+      cv::linemod::Detector detector;
+      document.get_attachment<cv::linemod::Detector>("detector", detector);
+      std::string object_id_in_db = detector.classIds()[0];
+      for (size_t template_id = 0; template_id < detector.numTemplates();
+          ++template_id)
+        detector_->addSyntheticTemplate(
+            detector.getTemplates(object_id_in_db, template_id), object_id);
 
-        // Load the detector for that class
-        cv::linemod::Detector detector;
-        document.get_attachment < cv::linemod::Detector > ("detector", detector);
-        std::string object_id_in_db = detector.classIds()[0];
-        for (size_t template_id = 0; template_id < detector.numTemplates(); ++template_id)
-          detector_.addSyntheticTemplate(detector.getTemplates(object_id_in_db, template_id), object_id);
+      // Deal with the poses
+      document.get_attachment<std::vector<cv::Mat> >("Rs", Rs_[object_id]);
+      document.get_attachment<std::vector<cv::Mat> >("Ts", Ts_[object_id]);
 
-        // TODO, load those detectors into the main detector or different objects
-
-        //document.get_attachment < std::vector<cv::Mat> > ("Rs", Rs_[object_id]);
-        //document.get_attachment < std::vector<cv::Mat> > ("Ts", Ts_[object_id]);
-        printf("Loaded %s\n", object_id.c_str());
-      }
+      std::cout << "Loaded " << object_id << std::endl;
     }
+  }
 
     static void
     declare_params(tendrils& params)
     {
       object_recognition_core::db::bases::declare_params_impl(params);
       params.declare(&Detector::threshold_, "threshold", "Matching threshold, as a percentage", 90.0f);
+      params.declare(&Detector::visualize_, "visualize", "If True, visualize the output.", false);
     }
 
     static void
@@ -127,13 +121,12 @@ namespace ecto_linemod
       inputs.declare(&Detector::depth_, "depth", "The 16bit depth image.");
 
       outputs.declare(&Detector::pose_results_, "pose_results", "The results of object recognition");
-      outputs.declare(&Detector::out_, "image", "The found template.");
     }
 
     void
     configure(const tendrils& params, const tendrils& inputs, const tendrils& outputs)
     {
-      configure_impl();
+      configure_impl("LINEMOD");
     }
 
     int
@@ -147,49 +140,57 @@ namespace ecto_linemod
       else
         color_->copyTo(color);
 
+      pose_results_->clear();
+
+      if (detector_->classIds().empty())
+        return ecto::OK;
+
       std::vector<cv::Mat> sources;
       sources.push_back(color);
       sources.push_back(*depth_);
 
       std::vector<cv::linemod::Match> matches;
-      detector_.match(sources, *threshold_, matches);
-      pose_results_->clear();
+      detector_->match(sources, *threshold_, matches);
       cv::Mat display = color;
-      int num_modalities = (int) detector_.getModalities().size();
+      int num_modalities = (int) detector_->getModalities().size();
 
-      //std::cout << matches.size() << std::endl;
-      BOOST_FOREACH(const cv::linemod::Match & match, matches)
-      {
-        const std::vector<cv::linemod::Template>& templates = detector_.getTemplates(match.class_id, match.template_id);
-        drawResponse(templates, num_modalities, display, cv::Point(match.x, match.y), detector_.getT(0));
+    BOOST_FOREACH(const cv::linemod::Match & match, matches) {
+      const std::vector<cv::linemod::Template>& templates =
+          detector_->getTemplates(match.class_id, match.template_id);
+      if (*visualize_)
+        drawResponse(templates, num_modalities, display,
+            cv::Point(match.x, match.y), detector_->getT(0));
 
-        /// @todo Where do R and T come from? Can associate with matches[0].template_id
-        /*PoseResult pose_result;
-         pose_result.set_R(Rs_.at(match.class_id)[match.template_id]);
-         pose_result.set_T(Ts_.at(match.class_id)[match.template_id]);
-         pose_result.set_object_id(*db_, match.class_id);
-         pose_results_->push_back(pose_result);*/
-      };
-      display.copyTo(*out_);
-
-      return ecto::OK;
+      // Fill the Pose object
+      PoseResult pose_result;
+      pose_result.set_R(Rs_.at(match.class_id)[match.template_id]);
+      pose_result.set_T(Ts_.at(match.class_id)[match.template_id]);
+      pose_result.set_object_id(db_, match.class_id);
+      pose_results_->push_back(pose_result);
+    };
+    if (*visualize_) {
+      cv::namedWindow("LINEMOD");
+      cv::imshow("LINEMOD", display);
+      cv::waitKey(1);
     }
+    return ecto::OK;
+  }
 
-    cv::linemod::Detector detector_;
+  /** LINE-MOD detector */
+  cv::Ptr<cv::linemod::Detector> detector_;
     // Parameters
     spore<float> threshold_;
     // Inputs
     spore<cv::Mat> color_, depth_;
 
+    /** True or False to output debug image */
+    ecto::spore<bool> visualize_;
     /** The object recognition results */
     ecto::spore<std::vector<PoseResult> > pose_results_;
-    /** The DB parameters */
-    ecto::spore<ObjectDbPtr> db_;
-    ecto::spore<cv::Mat> out_;
     /** The rotations, per object and per template */
-    //std::map<std::string, std::vector<cv::Mat> > Rs_;
+    std::map<std::string, std::vector<cv::Mat> > Rs_;
     /** The translations, per object and per template */
-    //std::map<std::string, std::vector<cv::Mat> > Ts_;
+    std::map<std::string, std::vector<cv::Mat> > Ts_;
   };
 
 } // namespace ecto_linemod
