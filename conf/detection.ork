@@ -1,0 +1,32 @@
+# info about the db
+
+source1:
+  type: 'OpenNI'
+  module: 'object_recognition_core.io.source'
+  parameters:
+    image_mode: 'SXGA_RES'
+    depth_mode: 'VGA_RES'
+    image_fps: 'FPS_15'
+    depth_fps: 'FPS_30'
+
+#source1:
+#  type: RosKinect
+#  module: 'object_recognition_ros.io'
+#  rgb_frame_id: '/camera_rgb_optical_frame'
+#  bag: /home/vrabaud/tod_data_new/training/object_recognition_capture/eggo_01.bag
+
+pipeline1:
+  type: LinemodDetector
+  module: 'object_recognition_linemod'
+  subtype: 'DefaultLINEMOD'
+  inputs: [source1]
+  parameters:
+    visualize: True
+    # The list of object_ids to analyze
+    object_ids: 'all'
+    #object_ids: ['ed149575c2a44c1c095c5bc1b80c3038']
+    threshold: 85
+    db:
+      type: 'CouchDB'
+      root: 'http://localhost:5984'
+      collection: 'object_recognition'
