@@ -53,9 +53,9 @@ namespace linemod_ecto
     declare_io(const ecto::tendrils& params, ecto::tendrils& inputs, ecto::tendrils& outputs)
     {
       typedef ModelFiller C;
-      inputs.declare(&C::detector_, "detector", "The LINE-MOD detector");
-      inputs.declare(&C::Rs_, "Rs", "The matching rotations of the templates");
-      inputs.declare(&C::Ts_, "Ts", "The matching translations of the templates.");
+      inputs.declare(&C::detector_, "detector", "The LINE-MOD detector").required(true);
+      inputs.declare(&C::Rs_, "Rs", "The matching rotations of the templates").required(true);
+      inputs.declare(&C::Ts_, "Ts", "The matching translations of the templates.").required(true);
 
       outputs.declare(&C::db_document_, "db_document", "The filled document.");
     }
