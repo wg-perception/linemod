@@ -48,7 +48,13 @@
 #include <object_recognition_core/common/json.hpp>
 #include <object_recognition_core/db/db.h>
 #include <object_recognition_core/db/model_utils.h>
+
+#define USE_GLUT 1
+#if USE_GLUT
+#include <object_recognition_renderer/renderer_glut.h>
+#else
 #include <object_recognition_renderer/renderer_osmesa.h>
+#endif
 
 using ecto::tendrils;
 using ecto::spore;
@@ -114,7 +120,11 @@ namespace ecto_linemod
       double focal_length_x = 525, focal_length_y = 525;
 
     // the model name can be specified on the command line.
+#if USE_GLUT
+    RendererGlut renderer = RendererGlut(mesh_path);
+#else
     RendererOSMesa renderer = RendererOSMesa(mesh_path);
+#endif
     renderer.set_parameters(width, height, focal_length_x, focal_length_y, near,
         far);
     std::remove(mesh_path.c_str());
