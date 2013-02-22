@@ -1,4 +1,4 @@
-.. _ork_linemod:
+.. _LINE_MOD:
 
 object_recognition_linemod: Object Recognition Using LINE-MOD
 =============================================================
