@@ -1,4 +1,4 @@
-.. _LINE_MOD:
+.. _line_mod:
 
 object_recognition_linemod: Object Recognition Using LINE-MOD
 =============================================================
