@@ -1,6 +1,4 @@
-:orphan:
-
-.. _LINE-MOD:
+.. _LINE_MOD:
 
 object_recognition_linemod: Object Recognition Using LINE-MOD
 =============================================================
