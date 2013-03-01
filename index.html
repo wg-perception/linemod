@@ -39,6 +39,14 @@
     </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">object_recognition_linemod: Object Recognition Using LINE-MOD</a><ul>
+<li><a class="reference internal" href="#pre-processing-step">Pre-processing step:</a></li>
+</ul>
+</li>
+</ul>
+
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/index.txt"
@@ -67,7 +75,16 @@
             
   <div class="section" id="object-recognition-linemod-object-recognition-using-line-mod">
 <span id="line-mod"></span><h1>object_recognition_linemod: Object Recognition Using LINE-MOD<a class="headerlink" href="#object-recognition-linemod-object-recognition-using-line-mod" title="Permalink to this headline">¶</a></h1>
-<p>This pipeline implements LINE-MOD. For more information, see <a class="reference external" href="http://ar.in.tum.de/Main/StefanHinterstoisser">http://ar.in.tum.de/Main/StefanHinterstoisser</a>.</p>
+<p>This pipeline implements LINE-MOD. For more information, see <a class="reference external" href="http://ar.in.tum.de/Main/StefanHinterstoisser">http://ar.in.tum.de/Main/StefanHinterstoisser</a>. It is one of
+the best methods out there for generic rigid object recognition and it proceeds using very fast template matching. The
+version used in that package is the same as the original paper (and it is in <a class="reference external" href="http://opencv.org/">OpenCV</a>) but the
+tricks to get it work properly are in the pre/post processing steps.</p>
+<div class="section" id="pre-processing-step">
+<h2>Pre-processing step:<a class="headerlink" href="#pre-processing-step" title="Permalink to this headline">¶</a></h2>
+<p>To generate all the templates, It uses an <a class="reference external" href="http://wg-perception.github.com/ork_renderer/index.html#renderer" title="(in object_recognition_renderer v)"><em class="xref std std-ref">automatic view generator</em></a>.</p>
+<p>Linear Least-Squares Optimization for Point-to-Plane ICP Surface Registration</p>
+<p>from Kok-Lim Low</p>
+</div>
 </div>
 
 

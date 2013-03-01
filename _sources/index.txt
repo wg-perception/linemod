@@ -1,6 +1,18 @@
-.. _LINE_MOD:
+.. _line_mod:
 
 object_recognition_linemod: Object Recognition Using LINE-MOD
-=============================================================
+#############################################################
 
-This pipeline implements LINE-MOD. For more information, see http://ar.in.tum.de/Main/StefanHinterstoisser.
+This pipeline implements LINE-MOD. For more information, see http://ar.in.tum.de/Main/StefanHinterstoisser. It is one of
+the best methods out there for generic rigid object recognition and it proceeds using very fast template matching. The
+version used in that package is the same as the original paper (and it is in `OpenCV <http://opencv.org/>`_) but the
+tricks to get it work properly are in the pre/post processing steps.
+
+Pre-processing step:
+********************
+
+To generate all the templates, It uses an :ref:`automatic view generator <orkrenderer:renderer>`.
+
+Linear Least-Squares Optimization for Point-to-Plane ICP Surface Registration
+
+from Kok-Lim Low
