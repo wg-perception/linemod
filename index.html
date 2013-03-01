@@ -43,6 +43,8 @@
   <ul>
 <li><a class="reference internal" href="#">object_recognition_linemod: Object Recognition Using LINE-MOD</a><ul>
 <li><a class="reference internal" href="#pre-processing-step">Pre-processing step:</a></li>
+<li><a class="reference internal" href="#processing-step">Processing step:</a></li>
+<li><a class="reference internal" href="#post-processing-step">Post-processing step:</a></li>
 </ul>
 </li>
 </ul>
@@ -81,9 +83,18 @@ version used in that package is the same as the original paper (and it is in <a 
 tricks to get it work properly are in the pre/post processing steps.</p>
 <div class="section" id="pre-processing-step">
 <h2>Pre-processing step:<a class="headerlink" href="#pre-processing-step" title="Permalink to this headline">¶</a></h2>
-<p>To generate all the templates, It uses an <a class="reference external" href="http://wg-perception.github.com/ork_renderer/index.html#renderer" title="(in object_recognition_renderer v)"><em class="xref std std-ref">automatic view generator</em></a>.</p>
-<p>Linear Least-Squares Optimization for Point-to-Plane ICP Surface Registration</p>
-<p>from Kok-Lim Low</p>
+<p>To generate all the templates, it uses an <a class="reference external" href="http://wg-perception.github.com/ork_renderer/index.html#renderer" title="(in object_recognition_renderer v)"><em class="xref std std-ref">automatic view generator</em></a>. Those vary the
+in-plane rotations of the cameras and deals with the different scales and view points. Thousands of images with
+depth+mask are generated and fed to the OpenCV trainer.</p>
+</div>
+<div class="section" id="processing-step">
+<h2>Processing step:<a class="headerlink" href="#processing-step" title="Permalink to this headline">¶</a></h2>
+<p>The OpenCV detector is simply called</p>
+</div>
+<div class="section" id="post-processing-step">
+<h2>Post-processing step:<a class="headerlink" href="#post-processing-step" title="Permalink to this headline">¶</a></h2>
+<p>TODO: implement an ICP step like the ACCV paper, probably:
+<tt class="docutils literal"><span class="pre">Linear</span> <span class="pre">Least-Squares</span> <span class="pre">Optimization</span> <span class="pre">for</span> <span class="pre">Point-to-Plane</span> <span class="pre">ICP</span> <span class="pre">Surface</span> <span class="pre">Registration</span></tt> from Kok-Lim Low.</p>
 </div>
 </div>
 

@@ -11,8 +11,18 @@ tricks to get it work properly are in the pre/post processing steps.
 Pre-processing step:
 ********************
 
-To generate all the templates, It uses an :ref:`automatic view generator <orkrenderer:renderer>`.
+To generate all the templates, it uses an :ref:`automatic view generator <orkrenderer:renderer>`. Those vary the
+in-plane rotations of the cameras and deals with the different scales and view points. Thousands of images with
+depth+mask are generated and fed to the OpenCV trainer.
 
-Linear Least-Squares Optimization for Point-to-Plane ICP Surface Registration
 
-from Kok-Lim Low
+Processing step:
+****************
+
+The OpenCV detector is simply called
+
+Post-processing step:
+*********************
+
+TODO: implement an ICP step like the ACCV paper, probably:
+``Linear Least-Squares Optimization for Point-to-Plane ICP Surface Registration`` from Kok-Lim Low.
