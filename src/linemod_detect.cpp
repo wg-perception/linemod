@@ -87,7 +87,7 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
 
     detector_ = cv::linemod::getDefaultLINEMOD();
     BOOST_FOREACH(const object_recognition_core::db::Document & document, db_documents) {
-      std::string object_id = document.get_value<ObjectId>("object_id");
+      std::string object_id = document.get_field<ObjectId>("object_id");
 
       // Load the detector for that class
       cv::linemod::Detector detector;

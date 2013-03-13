@@ -46,7 +46,7 @@ namespace object_recognition_core
     // Specializations for cv::linemod::Detector
     template<>
     void
-    object_recognition_core::db::Document::get_attachment<cv::linemod::Detector>(const AttachmentName& attachment_name,
+    object_recognition_core::db::DummyDocument::get_attachment<cv::linemod::Detector>(const AttachmentName& attachment_name,
                                                                                  cv::linemod::Detector& value) const;
 
     template<>
@@ -56,14 +56,14 @@ namespace object_recognition_core
 
     template<>
     void
-    object_recognition_core::db::Document::set_attachment<cv::linemod::Detector>(const AttachmentName& attachment_name,
+    object_recognition_core::db::DummyDocument::set_attachment<cv::linemod::Detector>(const AttachmentName& attachment_name,
                                                                                  const cv::linemod::Detector& value);
 
     // Specializations for std::vector<cv::Mat>
     // Actually not needed anymore but you never know ....
     template<>
     void
-    object_recognition_core::db::Document::get_attachment<std::vector<cv::Mat> >(const AttachmentName& attachment_name,
+    object_recognition_core::db::DummyDocument::get_attachment<std::vector<cv::Mat> >(const AttachmentName& attachment_name,
                                                                                  std::vector<cv::Mat>& value) const;
 
     template<>
@@ -73,7 +73,7 @@ namespace object_recognition_core
 
     template<>
     void
-    object_recognition_core::db::Document::set_attachment<std::vector<cv::Mat> >(const AttachmentName& attachment_name,
+    object_recognition_core::db::DummyDocument::set_attachment<std::vector<cv::Mat> >(const AttachmentName& attachment_name,
                                                                                  const std::vector<cv::Mat>& value);
   }
 }
