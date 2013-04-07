@@ -37,7 +37,7 @@
 #include <opencv2/core/core.hpp>
 
 #include <object_recognition_core/common/types.h>
-#include <object_recognition_core/db/db.h>
+#include <object_recognition_core/db/document.h>
 
 #include "db_linemod.h"
 

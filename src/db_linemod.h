@@ -36,7 +36,7 @@
 #ifndef DB_LINEMOD_H_
 #define DB_LINEMOD_H_
 
-#include <object_recognition_core/db/db.h>
+#include <object_recognition_core/db/document.h>
 #include <opencv2/objdetect/objdetect.hpp>
 
 namespace object_recognition_core

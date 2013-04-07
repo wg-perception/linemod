@@ -47,6 +47,7 @@
 
 #include <object_recognition_core/common/json.hpp>
 #include <object_recognition_core/db/db.h>
+#include <object_recognition_core/db/document.h>
 #include <object_recognition_core/db/model_utils.h>
 
 #define USE_GLUT 1
