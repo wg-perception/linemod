@@ -27,7 +27,7 @@ class LinemodTrainer(ecto.BlackBox, TrainerBase):
 
         # 'real cells'
         cells.update({'model_filler': CellInfo(ecto_linemod.ModelFiller),
-                      'model_writer': CellInfo(ModelWriter),
+                      'model_writer': CellInfo(ModelWriter, params={'method':'LINEMOD'}),
                       'trainer': CellInfo(ecto_linemod.Trainer)})
 
         return cells
@@ -35,7 +35,6 @@ class LinemodTrainer(ecto.BlackBox, TrainerBase):
     @classmethod
     def declare_forwards(cls, _p):
         p = {'json_db': [Forward('value', 'json_db')],
-             'model_writer': [Forward('json_submethod'), Forward('method')],
              'object_id': [Forward('value', 'object_id')]}
         i = {}
         o = {}

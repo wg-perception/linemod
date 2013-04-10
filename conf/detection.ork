@@ -18,7 +18,6 @@ source1:
 pipeline1:
   type: LinemodDetector
   module: 'object_recognition_linemod'
-  subtype: 'DefaultLINEMOD'
   inputs: [source1]
   parameters:
     visualize: True

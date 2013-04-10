@@ -109,7 +109,7 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
     static void
     declare_params(tendrils& params)
     {
-      object_recognition_core::db::bases::declare_params_impl(params);
+      object_recognition_core::db::bases::declare_params_impl(params, "LINEMOD");
       params.declare(&Detector::threshold_, "threshold", "Matching threshold, as a percentage", 90.0f);
       params.declare(&Detector::visualize_, "visualize", "If True, visualize the output.", false);
     }
@@ -126,7 +126,7 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
     void
     configure(const tendrils& params, const tendrils& inputs, const tendrils& outputs)
     {
-      configure_impl("LINEMOD");
+      configure_impl();
     }
 
     int
