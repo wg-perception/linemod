@@ -2,8 +2,8 @@
   <name>object_recognition_linemod</name>
   <version>0.2.11</version>
   <description>An object recognition pipeline that uses LINE-MOD from OpenCV</description>
-  <author email="vrabaud@willowgarage.com">Vincent Rabaud</author>
-  <maintainer email="vrabaud@willowgarage.com">Vincent Rabaud</maintainer>
+  <author email="vincent.rabaud@gmail.com">Vincent Rabaud</author>
+  <maintainer email="vincent.rabaud@gmail.com">Vincent Rabaud</maintainer>
   <license>BSD</license>
   
   <url>https://github.com/wg-perception/linemod</url>
