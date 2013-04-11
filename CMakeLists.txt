@@ -48,3 +48,8 @@ endif()
 
 # build the docs
 ecto_sphinx(${CMAKE_CURRENT_SOURCE_DIR}/doc/source doc)
+
+# install the conf files
+install(DIRECTORY conf
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
