@@ -56,6 +56,7 @@
 #else
 #include <object_recognition_renderer/renderer_osmesa.h>
 #endif
+#include <object_recognition_renderer/utils.h>
 
 using ecto::tendrils;
 using ecto::spore;
