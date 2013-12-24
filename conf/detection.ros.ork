@@ -1,28 +1,29 @@
 # info about the db
 
-source1:
-  type: 'OpenNI'
-  module: 'object_recognition_core.io.source'
-  parameters:
-    image_mode: 'SXGA_RES'
-    depth_mode: 'VGA_RES'
-    image_fps: 'FPS_15'
-    depth_fps: 'FPS_30'
-
 #source1:
-#  type: RosKinect
-#  module: 'object_recognition_ros.io'
-#  rgb_frame_id: '/camera_rgb_optical_frame'
+#  type: 'OpenNI'
+#  module: 'object_recognition_core.io.source'
+#  parameters:
+#    image_mode: 'SXGA_RES'
+#    depth_mode: 'VGA_RES'
+#    image_fps: 'FPS_15'
+#    depth_fps: 'FPS_30'
+
+source1:
+  type: RosKinect
+  module: 'object_recognition_ros.io'
+  parameters:
+    rgb_frame_id: 'camera_rgb_optical_frame'
 #  bag: /home/vrabaud/tod_data_new/training/object_recognition_capture/eggo_01.bag
 
 sink1:
   type: Publisher
   module: 'object_recognition_ros.io'
+  inputs: [source1]
 
 pipeline1:
   type: LinemodDetector
   module: 'object_recognition_linemod'
-  subtype: 'DefaultLINEMOD'
   inputs: [source1]
   outputs: [sink1]
   parameters:
