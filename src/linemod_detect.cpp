@@ -110,7 +110,7 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
     declare_params(tendrils& params)
     {
       object_recognition_core::db::bases::declare_params_impl(params, "LINEMOD");
-      params.declare(&Detector::threshold_, "threshold", "Matching threshold, as a percentage", 90.0f);
+      params.declare(&Detector::threshold_, "threshold", "Matching threshold, as a percentage", 93.0f);
       params.declare(&Detector::visualize_, "visualize", "If True, visualize the output.", false);
     }
 
@@ -163,8 +163,13 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
 
       // Fill the Pose object
       PoseResult pose_result;
-      pose_result.set_R(Rs_.at(match.class_id)[match.template_id]);
-      pose_result.set_T(Ts_.at(match.class_id)[match.template_id]);
+      cv::Mat R = Rs_.at(match.class_id)[match.template_id].clone();
+      cv::Mat T = Ts_.at(match.class_id)[match.template_id].clone();
+      T = R*T;
+      T.at<double>(1,0) = -T.at<double>(1,0);
+      T.at<double>(2,0) = -T.at<double>(2,0);
+      pose_result.set_R(R);
+      pose_result.set_T(T);
       pose_result.set_object_id(db_, match.class_id);
       pose_results_->push_back(pose_result);
     };

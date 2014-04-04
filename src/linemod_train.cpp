@@ -93,25 +93,28 @@ namespace ecto_linemod
             std::vector<object_recognition_core::db::ObjectId>(1, *object_id_),
             "mesh");
     if (documents.empty()) {
-      std::stringstream ss;
-      ss << "No object with id \"" << *object_id_ << "\" with a mesh in the DB"
-          << std::endl;
-      throw std::runtime_error(ss.str());
+      std::cerr << "Skipping object id \"" << *object_id_ << "\" : no mesh in the DB" << std::endl;
+      return ecto::OK;
     }
 
-    // Load the mesh and save it to a temporary file
+    // Get the list of _attachments and figure out the original one
     object_recognition_core::db::Document document = documents[0];
+    std::vector<std::string> attachments_names = document.attachment_names();
     std::string mesh_path;
-    {
+    BOOST_FOREACH(const std::string& attachment_name, attachments_names) {
+      if (attachment_name.find("original") != 0)
+        continue;
+      // Create a temporary file
       char mesh_path_tmp[L_tmpnam];
       tmpnam(mesh_path_tmp);
-      mesh_path = std::string(mesh_path_tmp) + ".stl";
-    }
+      mesh_path = std::string(mesh_path_tmp) + attachment_name.substr(8);
 
-    std::ofstream mesh_file;
-    mesh_file.open(mesh_path.c_str());
-    document.get_attachment_stream("mesh.stl", mesh_file);
-    mesh_file.close();
+      // Load the mesh and save it to the temporary file
+      std::ofstream mesh_file;
+      mesh_file.open(mesh_path.c_str());
+      document.get_attachment_stream(attachment_name, mesh_file);
+      mesh_file.close();
+    }
 
       cv::Ptr<cv::linemod::Detector> detector_ptr = cv::linemod::getDefaultLINEMOD();
       *detector_ = *detector_ptr;
@@ -154,6 +157,13 @@ namespace ecto_linemod
         sources[0] = image;
         sources[1] = depth;
 
+/*      // Display the rendered image
+      cv::namedWindow("Rendering");
+      if (!image.empty()) {
+        cv::imshow("Rendering", image);
+        cv::waitKey(1);
+      }
+*/
         detector_->addTemplate(sources, "object1", mask);
 
         // Also store the pose of each template

@@ -224,4 +224,5 @@ rst_epilog = """
 
 """
 
-intersphinx_mapping = {'orkrenderer': ('http://wg-perception.github.com/ork_renderer', None)}
+intersphinx_mapping = {'orkcapture': ('http://wg-perception.github.com/capture', None),
+                       'orkrenderer': ('http://wg-perception.github.com/ork_renderer', None)}
