@@ -38,8 +38,8 @@ from ecto_opencv.highgui import imshow
 from ecto_opencv.imgproc import cvtColor, Conversion
 from object_recognition_linemod.ecto_cells.ecto_linemod import Detector
 from ecto.opts import run_plasm, scheduler_options
-from object_recognition_linemod.detector import LinemodDetectionPipeline
-from object_recognition_core.utils.json_helper import dict_to_cpp_json_str, list_to_cpp_json_str
+from object_recognition_linemod.detector import LinemodDetector
+from object_recognition_core.utils.json_helper import obj_to_cpp_json_str
 from object_recognition_core.db import ObjectDb, ObjectDbParameters, Models
 from ecto_image_pipeline.io.source import create_source
 from object_recognition_core.utils import json_helper
@@ -58,19 +58,15 @@ if __name__ == '__main__':
 
     plasm = ecto.Plasm()
 
-    db_params = ObjectDbParameters({'type': 'CouchDB', 'root': 'http://bwl.willowgarage.com:5984',
+    json_db_params = obj_to_cpp_json_str({'type': 'CouchDB', 'root': 'http://bwl.willowgarage.com:5984',
                                         'collection': 'object_recognition'})
-    object_db = ObjectDb(db_params)
 
     #setup the input source, grayscale conversion
     from ecto_openni import VGA_RES, FPS_30
     source = create_source('image_pipeline','OpenNISource',image_mode=VGA_RES,image_fps=FPS_30)
 
-    print LinemodDetectionPipeline.type_name()
-    object_ids = ['whoolite', 'tilex']
-    model_documents = Models(object_db, object_ids, LinemodDetectionPipeline.type_name(), json_helper.dict_to_cpp_json_str({}))
-    print len(model_documents)
-    detector = Detector(model_documents=model_documents, db=object_db, threshold=90)
+    object_ids = obj_to_cpp_json_str(['whoolite', 'tilex'])
+    detector = Detector(json_object_ids=object_ids, json_db=json_db_params, threshold=90, visualize=True)
 
     #connect up the pose_est
     plasm.connect(source['image'] >> detector['image'],
@@ -87,7 +83,5 @@ if __name__ == '__main__':
         pub_rgb = ecto_ros.ecto_sensor_msgs.Publisher_Image("image pub", topic_name='linemod_image')
         plasm.connect(detector['image'] >> mat2image[:],
                       mat2image[:] >> pub_rgb[:])
-    else:
-        plasm.connect(detector['image'] >> imshow(name='result')[:])
 
     run_plasm(options, plasm, locals=vars())
