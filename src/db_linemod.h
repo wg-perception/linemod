@@ -75,6 +75,56 @@ namespace object_recognition_core
     void
     object_recognition_core::db::DummyDocument::set_attachment<std::vector<cv::Mat> >(const AttachmentName& attachment_name,
                                                                                  const std::vector<cv::Mat>& value);
+
+
+    // Specializations for std::vector<float>
+    // Actually not needed anymore but you never know ....
+    template<>
+    void
+    object_recognition_core::db::DummyDocument::get_attachment<std::vector<float> >(const AttachmentName& attachment_name,
+                                                                                 std::vector<float>& value) const;
+
+    template<>
+    void
+    object_recognition_core::db::Document::get_attachment_and_cache<std::vector<float> >(
+        const AttachmentName& attachment_name, std::vector<float>& value);
+
+    template<>
+    void
+    object_recognition_core::db::DummyDocument::set_attachment<std::vector<float> >(const AttachmentName& attachment_name,
+                                                                                 const std::vector<float>& value);
+
+    /** Struct for detected objects info*/
+    struct ObjData{
+      ObjData(
+              std::vector<cv::Vec3f> _pts_ref,
+              std::vector<cv::Vec3f> _pts_model,
+              std::string _match_class,
+              const float _match_sim,
+              const float _icp_dist,
+              const float _icp_px_match,
+              const cv::Matx33f _r,
+              const cv::Vec3f _t){
+        pts_ref = _pts_ref;
+        pts_model = _pts_model;
+        match_class = _match_class;
+        match_sim = _match_sim;
+        icp_dist = _icp_dist;
+        icp_px_match = _icp_px_match,
+        r = _r;
+        t = _t;
+        check_done = false;
+      }
+      std::vector<cv::Vec3f> pts_ref;
+      std::vector<cv::Vec3f> pts_model;
+      std::string match_class;
+      float match_sim;
+      float icp_dist;
+      float icp_px_match;
+      cv::Matx33f r;
+      cv::Vec3f t;
+      bool check_done;
+    };
   }
 }
 

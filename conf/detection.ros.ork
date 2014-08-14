@@ -14,6 +14,11 @@ source1:
   module: 'object_recognition_ros.io'
   parameters:
     rgb_frame_id: 'camera_rgb_optical_frame'
+    rgb_image_topic: '/camera/rgb/image_rect_color'
+    rgb_camera_info: '/camera/rgb/camera_info'
+    depth_frame_id: 'camera_depth_optical_frame'
+    depth_image_topic: '/camera/depth_registered/image_raw'
+    depth_camera_info: '/camera/depth_registered/camera_info'
 #  bag: /home/vrabaud/tod_data_new/training/object_recognition_capture/eggo_01.bag
 
 sink1:
@@ -27,6 +32,15 @@ pipeline1:
   inputs: [source1]
   outputs: [sink1]
   parameters:
+    use_rgb: 1
+    use_depth: 1
+    verbose: 1
+    visualize: 1
+    threshold: 91.6 #82.9 #91.6 
+    th_obj_dist: 0.1
+    icp_dist_min: 0.05 #0.06
+    px_match_min: 0.25 #0.5
+    depth_frame_id: 'camera_depth_optical_frame' #CameraDepth_frame
     # The list of object_ids to analyze
     object_ids: 'all'
     #object_ids: ['ed149575c2a44c1c095c5bc1b80c3038']
