@@ -137,6 +137,7 @@ namespace ecto_linemod
       RendererIterator renderer_iterator = RendererIterator(&renderer, 150);
 
       cv::Mat image, depth, mask;
+      cv::Rect rect;
       cv::Mat_<unsigned short> depth_short;
       cv::Matx33d R;
       cv::Vec3d T;
@@ -147,7 +148,7 @@ namespace ecto_linemod
           << renderer_iterator.n_templates();
       std::cout << status.str();
 
-        renderer_iterator.render(image, depth, mask);
+        renderer_iterator.render(image, depth, mask, rect);
         R = renderer_iterator.R();
         T = renderer_iterator.T();
 
