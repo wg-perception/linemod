@@ -50,7 +50,7 @@ class LinemodTrainer(ecto.BlackBox, TrainerBase):
                          self.object_id['out'] >> self.trainer['object_id'] ]
 
         # connect the output to the post-processor
-        connections += [self.trainer['detector','Rs','Ts'] >> self.model_filler['detector','Rs','Ts']]
+        connections += [self.trainer['detector','Rs','Ts','distances','Ks','renderer_n_points','renderer_angle_step','renderer_radius_min','renderer_radius_max','renderer_radius_step','renderer_width','renderer_height','renderer_focal_length_x','renderer_focal_length_y','renderer_near','renderer_far'] >> self.model_filler['detector','Rs','Ts','distances','Ks','renderer_n_points','renderer_angle_step','renderer_radius_min','renderer_radius_max','renderer_radius_step','renderer_width','renderer_height','renderer_focal_length_x','renderer_focal_length_y','renderer_near','renderer_far']]
 
         # and write everything to the DB
         connections += [ self.object_id['out'] >> self.model_writer['object_id'],
