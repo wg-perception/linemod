@@ -1,5 +1,5 @@
-Forthcoming
------------
+0.3.1 (2015-01-18)
+------------------
 * fixed object orientation,
   fixed icp,
   added detection of multiple objects,
