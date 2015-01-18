@@ -1,5 +1,5 @@
-Forthcoming
------------
+0.3.2 (2015-01-18)
+------------------
 * fix compilation on 32 bits
 * update OpenCV dependency
 * Contributors: Vincent Rabaud
