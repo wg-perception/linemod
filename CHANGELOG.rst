@@ -1,3 +1,9 @@
+Forthcoming
+-----------
+* fix compilation on 32 bits
+* update OpenCV dependency
+* Contributors: Vincent Rabaud
+
 0.3.1 (2015-01-18)
 ------------------
 * fixed object orientation,
