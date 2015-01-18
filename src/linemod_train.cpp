@@ -49,11 +49,7 @@
 #include <object_recognition_core/db/document.h>
 #include <object_recognition_core/db/model_utils.h>
 
-#if USE_GLUT
-#include <object_recognition_renderer/renderer_glut.h>
-#else
-#include <object_recognition_renderer/renderer_osmesa.h>
-#endif
+#include <object_recognition_renderer/renderer3d.h>
 #include <object_recognition_renderer/utils.h>
 
 #if LINEMOD_VIZ_IMG
@@ -140,11 +136,7 @@ namespace ecto_linemod
     *renderer_focal_length_x_ = 525.0; *renderer_focal_length_y_ = 525.0;
 
     // the model name can be specified on the command line.
-#if USE_GLUT
-    RendererGlut renderer = RendererGlut(mesh_path);
-#else
-    RendererOSMesa renderer = RendererOSMesa(mesh_path);
-#endif
+    Renderer3d renderer = Renderer3d(mesh_path);
     renderer.set_parameters(*renderer_width_, *renderer_height_, *renderer_focal_length_x_,
                             *renderer_focal_length_y_, *renderer_near_, *renderer_far_);
 

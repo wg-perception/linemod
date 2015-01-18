@@ -49,11 +49,7 @@
 #include "db_linemod.h"
 
 #include <object_recognition_renderer/utils.h>
-#if USE_GLUT
-#include <object_recognition_renderer/renderer_glut.h>
-#else
-#include <object_recognition_renderer/renderer_osmesa.h>
-#endif
+#include <object_recognition_renderer/renderer3d.h>
 
 #include "linemod_icp.h"
 
@@ -238,13 +234,8 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
       }
 
       // the model name can be specified on the command line.
-#if USE_GLUT
-      RendererGlut *renderer_ = new RendererGlut(mesh_path);
+      Renderer3d *renderer_ = new Renderer3d(mesh_path);
       renderer_->set_parameters(renderer_width_, renderer_height_, renderer_focal_length_x_, renderer_focal_length_y_, renderer_near_, renderer_far_);
-#else
-      RendererOSMesa *renderer_ = new RendererOSMesa(mesh_path);
-      renderer_->set_parameters(renderer_width_, renderer_height_, renderer_focal_length_x_, renderer_focal_length_y_, renderer_near_, renderer_far_);
-#endif
 
       std::remove(mesh_path.c_str());
 
