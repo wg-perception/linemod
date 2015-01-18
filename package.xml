@@ -11,13 +11,11 @@
   <build_depend>ecto</build_depend>
   <build_depend>object_recognition_core</build_depend>
   <build_depend>object_recognition_renderer</build_depend>
-  <build_depend>opencv2</build_depend>
   <build_depend>opencv_candidate</build_depend>
 
   <run_depend>ecto</run_depend>
   <run_depend>object_recognition_core</run_depend>
   <run_depend>object_recognition_renderer</run_depend>
-  <run_depend>opencv2</run_depend>
   <run_depend>opencv_candidate</run_depend>
 
   <buildtool_depend>catkin</buildtool_depend>
