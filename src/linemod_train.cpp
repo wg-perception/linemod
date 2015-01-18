@@ -229,8 +229,8 @@ namespace ecto_linemod
     ecto::spore<double> renderer_radius_min_;
     ecto::spore<double> renderer_radius_max_;
     ecto::spore<double> renderer_radius_step_;
-    ecto::spore<size_t> renderer_width_;
-    ecto::spore<size_t> renderer_height_;
+    ecto::spore<int> renderer_width_;
+    ecto::spore<int> renderer_height_;
     ecto::spore<double> renderer_near_;
     ecto::spore<double> renderer_far_;
     ecto::spore<double> renderer_focal_length_x_;

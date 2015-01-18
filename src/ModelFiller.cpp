@@ -88,8 +88,8 @@ namespace linemod_ecto
     db_document.set_field<double>("renderer_radius_min", *renderer_radius_min_);
     db_document.set_field<double>("renderer_radius_max", *renderer_radius_max_);
     db_document.set_field<double>("renderer_radius_step", *renderer_radius_step_);
-    db_document.set_field<size_t>("renderer_width", *renderer_width_);
-    db_document.set_field<size_t>("renderer_height", *renderer_height_);
+    db_document.set_field<int>("renderer_width", *renderer_width_);
+    db_document.set_field<int>("renderer_height", *renderer_height_);
     db_document.set_field<double>("renderer_focal_length_x", *renderer_focal_length_x_);
     db_document.set_field<double>("renderer_focal_length_y", *renderer_focal_length_y_);
     db_document.set_field<double>("renderer_near", *renderer_near_);
@@ -112,8 +112,8 @@ namespace linemod_ecto
     ecto::spore<double> renderer_radius_min_;
     ecto::spore<double> renderer_radius_max_;
     ecto::spore<double> renderer_radius_step_;
-    ecto::spore<size_t> renderer_width_;
-    ecto::spore<size_t> renderer_height_;
+    ecto::spore<int> renderer_width_;
+    ecto::spore<int> renderer_height_;
     ecto::spore<double> renderer_near_;
     ecto::spore<double> renderer_far_;
     ecto::spore<double> renderer_focal_length_x_;
