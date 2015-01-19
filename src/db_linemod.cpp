@@ -39,6 +39,8 @@
 
 #include "db_linemod.h"
 
+#include <iterator>
+
 namespace
 {
   object_recognition_core::db::MimeType MIME_TYPE = "text/x-yaml";
@@ -166,6 +168,45 @@ namespace object_recognition_core
 
       set_attachment_stream(attachment_name, out, MIME_TYPE);
       boost::filesystem::remove(file_name.c_str());
+    }
+
+    // Specializations for std::vector<float>
+    // Not used but you never know ...
+    template<>
+    void
+    object_recognition_core::db::DummyDocument::get_attachment<std::vector<float> >(const AttachmentName& attachment_name,
+                                                                                 std::vector<float> &value) const
+    {
+      // Get the binary file
+      std::stringstream ss;
+      this->get_attachment_stream(attachment_name, ss, MIME_TYPE);
+
+      float f;
+      value.clear();
+      while (!ss.eof()) {
+        ss >> f;
+        value.push_back(f);
+      }
+    }
+
+    template<>
+    void
+    object_recognition_core::db::Document::get_attachment_and_cache<std::vector<float> >(
+        const AttachmentName& attachment_name, std::vector<float> &value)
+    {
+      throw("Not implemented");
+    }
+
+    template<>
+    void
+    object_recognition_core::db::DummyDocument::set_attachment<std::vector<float> >(const AttachmentName& attachment_name,
+                                                                                 const std::vector<float>& value)
+    {
+      std::stringstream out;
+      for(std::vector<float>::const_iterator i=value.begin(); i != value.end(); ++i)
+        out << *i;
+
+      set_attachment_stream(attachment_name, out, MIME_TYPE);
     }
   }
 }

@@ -37,7 +37,6 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.viewcode']
 
 extensions += [
-              'catkin_sphinx.ShLexer',
               'ecto.sphinx.EctoCellDirective',
               'ecto.sphinx.EctoModuleDirective',
               'ecto.sphinx.EctoPlotDirective',
