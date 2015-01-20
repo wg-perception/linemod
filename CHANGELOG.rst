@@ -1,5 +1,5 @@
-Forthcoming
------------
+0.3.3 (2015-01-20)
+------------------
 * Fixed input params for training
 * use the new renderer API
 * Contributors: Vincent Rabaud, nlyubova
