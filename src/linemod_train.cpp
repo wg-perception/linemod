@@ -64,6 +64,22 @@ namespace ecto_linemod
   struct Trainer
   {
     static void
+    declare_params(tendrils& params)
+    {
+      params.declare(&Trainer::param_n_points_, "renderer_n_points", "Renderer parameter: the number of points on the sphere.", 150);
+      params.declare(&Trainer::param_angle_step_, "renderer_angle_step", "Renderer parameter: the angle step sampling in degrees.", 10);
+      params.declare(&Trainer::param_radius_min_, "renderer_radius_min", "Renderer parameter: the minimum scale sampling.", 0.6);
+      params.declare(&Trainer::param_radius_max_, "renderer_radius_max", "Renderer parameter: the maximum scale sampling.", 1.1);
+      params.declare(&Trainer::param_radius_step_, "renderer_radius_step", "Renderer parameter: the step scale sampling.", 0.4);
+      params.declare(&Trainer::param_width_, "renderer_width", "Renderer parameter: the image width.", 640);
+      params.declare(&Trainer::param_height_, "renderer_height", "Renderer parameter: the image height.", 480);
+      params.declare(&Trainer::param_focal_length_x_, "renderer_focal_length_x", "Renderer parameter: the focal length x.", 525.0);
+      params.declare(&Trainer::param_focal_length_y_, "renderer_focal_length_y", "Renderer parameter: the focal length y.", 525.0);
+      params.declare(&Trainer::param_near_, "renderer_near", "Renderer parameter: near distance.", 0.1);
+      params.declare(&Trainer::param_far_, "renderer_far", "Renderer parameter: far distance.", 1000.0);
+    }
+
+    static void
     declare_io(const tendrils& params, tendrils& inputs, tendrils& outputs)
     {
       inputs.declare(&Trainer::json_db_, "json_db", "The DB parameters", "{}").required(true);
@@ -131,9 +147,18 @@ namespace ecto_linemod
     *detector_ = *detector_ptr;
 
     // Define the display
-    *renderer_width_ = 640; *renderer_height_ = 480;
-    *renderer_near_ = 0.1; *renderer_far_ = 1000.0;
-    *renderer_focal_length_x_ = 525.0; *renderer_focal_length_y_ = 525.0;
+    //assign the parameters of the renderer
+    *renderer_n_points_ = *param_n_points_;
+    *renderer_angle_step_ = *param_angle_step_;
+    *renderer_radius_min_ = *param_radius_min_;
+    *renderer_radius_max_ = *param_radius_max_;
+    *renderer_radius_step_ = *param_radius_step_;
+    *renderer_width_ = *param_width_;
+    *renderer_height_ = *param_height_;
+    *renderer_near_ = *param_near_;
+    *renderer_far_ = *param_far_;
+    *renderer_focal_length_x_ = *param_focal_length_x_;
+    *renderer_focal_length_y_ = *param_focal_length_y_;
 
     // the model name can be specified on the command line.
     Renderer3d renderer = Renderer3d(mesh_path);
@@ -142,11 +167,6 @@ namespace ecto_linemod
 
     std::remove(mesh_path.c_str());
 
-    *renderer_n_points_ = 150;
-    *renderer_angle_step_ = 10;
-    *renderer_radius_min_ = 0.6;
-    *renderer_radius_max_ = 1.1;
-    *renderer_radius_step_ = 0.4;
     RendererIterator renderer_iterator = RendererIterator(&renderer, *renderer_n_points_);
     //set the RendererIterator parameters
     renderer_iterator.angle_step_ = *renderer_angle_step_;
@@ -216,6 +236,17 @@ namespace ecto_linemod
     ecto::spore<std::vector<cv::Mat> > Ts_;
     ecto::spore<std::vector<float> > distances_;
     ecto::spore<std::vector<cv::Mat> > Ks_;
+    ecto::spore<int> param_n_points_;
+    ecto::spore<int> param_angle_step_;
+    ecto::spore<double> param_radius_min_;
+    ecto::spore<double> param_radius_max_;
+    ecto::spore<double> param_radius_step_;
+    ecto::spore<int> param_width_;
+    ecto::spore<int> param_height_;
+    ecto::spore<double> param_near_;
+    ecto::spore<double> param_far_;
+    ecto::spore<double> param_focal_length_x_;
+    ecto::spore<double> param_focal_length_y_;
     ecto::spore<int> renderer_n_points_;
     ecto::spore<int> renderer_angle_step_;
     ecto::spore<double> renderer_radius_min_;
