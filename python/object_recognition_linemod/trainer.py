@@ -35,7 +35,8 @@ class LinemodTrainer(ecto.BlackBox, TrainerBase):
     @classmethod
     def declare_forwards(cls, _p):
         p = {'json_db': [Forward('value', 'json_db')],
-             'object_id': [Forward('value', 'object_id')]}
+             'object_id': [Forward('value', 'object_id')],
+             'trainer': 'all'}
         i = {}
         o = {}
 
