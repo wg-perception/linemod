@@ -209,7 +209,14 @@ namespace ecto_linemod
       }
 #endif
 
-      detector_->addTemplate(sources, "object1", mask);
+      int template_in = detector_->addTemplate(sources, "object1", mask);
+      if (template_in == -1)
+      {
+        // Delete the status
+        for (size_t j = 0; j < status.str().size(); ++j)
+          std::cout << '\b';
+        continue;
+      }
 
       // Also store the pose of each template
       Rs_->push_back(cv::Mat(R));
