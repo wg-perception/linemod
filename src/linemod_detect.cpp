@@ -277,10 +277,16 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
       }
       if (*use_depth_)
       {
+        if (depth_->depth() == 5)
+        {
+          *depth_ *= 1000.0f;
+          depth_->convertTo(*depth_, CV_16UC1);
+        }
+
         if (!(*use_rgb_))
         {
           //add a depth-based gray image to the list of sources for matching
-          depth_->convertTo(display, CV_8U, 255.0/(1800.0));
+          depth_->convertTo(display, CV_8U, 255.0/1800.0);
           cv::cvtColor(display, display, cv::COLOR_GRAY2BGR);
           sources.push_back(display);
         }
