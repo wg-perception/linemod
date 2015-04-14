@@ -277,8 +277,9 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
       }
       if (*use_depth_)
       {
+        cv::Mat depth = *depth_;
         if (depth_->depth() == CV_32F)
-          depth_->convertTo(*depth_, CV_16UC1, 1000.0);
+          depth_->convertTo(depth, CV_16UC1, 1000.0);
 
         if (!(*use_rgb_))
         {
@@ -288,7 +289,7 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
           sources.push_back(display);
         }
 
-        sources.push_back(*depth_);
+        sources.push_back(depth);
       }
 
       std::vector<cv::linemod::Match> matches;
