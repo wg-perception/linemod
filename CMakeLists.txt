@@ -21,7 +21,6 @@ include_directories(SYSTEM ${catkin_INCLUDE_DIRS}
 
 # Compile the module
 add_subdirectory(python)
-add_subdirectory(sample)
 add_subdirectory(src)
 
 # add the tests
