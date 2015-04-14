@@ -1,3 +1,13 @@
+Forthcoming
+-----------
+* remove the sample folder: a lot of old non-working code
+  This also fixes `#11 <https://github.com/wg-perception/linemod/issues/11>`_
+* fix `#13 <https://github.com/wg-perception/linemod/issues/13>`_ fully
+* Merge pull request `#13 <https://github.com/wg-perception/linemod/issues/13>`_ from nlyubova/master
+  Fixed issue with openNI2 while handing both 32F and 8U depth formats
+* Fixed issue with openNI2 while handing both 32F and 8U depth formats
+* Contributors: Vincent Rabaud, nlyubova
+
 0.3.3 (2015-01-20)
 ------------------
 * Fixed input params for training
