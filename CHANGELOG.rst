@@ -1,5 +1,5 @@
-Forthcoming
------------
+0.3.5 (2015-04-19)
+------------------
 * fixed the depth conversion to 32F, updated possible mesh names for both training and detection
 * Contributors: nlyubova
 
