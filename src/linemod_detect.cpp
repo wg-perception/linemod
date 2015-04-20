@@ -215,22 +215,27 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
       object_recognition_core::db::Document document = documents[0];
       std::vector<std::string> attachments_names = document.attachment_names();
       std::string mesh_path;
-      BOOST_FOREACH(const std::string& attachment_name, attachments_names){
-        if (attachment_name.find("original") != 0)
-          continue;
-        std::cout << "Reading the mesh file " << attachment_name << std::endl;
-        // Create a temporary file
-        char mesh_path_tmp[L_tmpnam];
-        mkstemp(mesh_path_tmp);
-        mesh_path = std::string(mesh_path_tmp) + attachment_name.substr(8);
+      std::vector<std::string> possible_names(2);
+      possible_names[0] = "original";
+      possible_names[1] = "mesh";
+      for (size_t i = 0; i < possible_names.size() && mesh_path.empty(); ++i) {
+        BOOST_FOREACH(const std::string& attachment_name, attachments_names){
+          if (attachment_name.find(possible_names[i]) != 0)
+            continue;
+          std::cout << "Reading the mesh file " << attachment_name << std::endl;
+          // Create a temporary file
+          char mesh_path_tmp[L_tmpnam];
+          mkstemp(mesh_path_tmp);
+          mesh_path = std::string(mesh_path_tmp) + attachment_name.substr(possible_names[i].size());
 
-        // Load the mesh and save it to the temporary file
-        std::ofstream mesh_file;
-        mesh_file.open(mesh_path.c_str());
-        document.get_attachment_stream(attachment_name, mesh_file);
-        mesh_file.close();
-        std::string str = mesh_path.c_str();
-        std::cout << "mesh_path " << std::string(mesh_path_tmp) << " " << attachment_name.substr(8) << std::endl;
+          // Load the mesh and save it to the temporary file
+          std::ofstream mesh_file;
+          mesh_file.open(mesh_path.c_str());
+          document.get_attachment_stream(attachment_name, mesh_file);
+          mesh_file.close();
+          std::string str = mesh_path.c_str();
+          std::cout << "mesh_path " << std::string(mesh_path_tmp) << " " << attachment_name.substr(8) << std::endl;
+        }
       }
 
       // the model name can be specified on the command line.
@@ -275,16 +280,17 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
 
         sources.push_back(color);
       }
+
+      cv::Mat depth = *depth_;
+      if (depth_->depth() == CV_32F)
+        depth_->convertTo(depth, CV_16UC1, 1000.0);
+
       if (*use_depth_)
       {
-        cv::Mat depth = *depth_;
-        if (depth_->depth() == CV_32F)
-          depth_->convertTo(depth, CV_16UC1, 1000.0);
-
         if (!(*use_rgb_))
         {
           //add a depth-based gray image to the list of sources for matching
-          depth_->convertTo(display, CV_8U, 255.0/1800.0);
+          depth.convertTo(display, CV_8U, 255.0/1800.0);
           cv::cvtColor(display, display, cv::COLOR_GRAY2BGR);
           sources.push_back(display);
         }
@@ -300,7 +306,7 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
       cv::Mat_<cv::Vec3f> depth_real_ref_raw;
       cv::Mat_<float> K;
       K_depth_->convertTo(K, CV_32F);
-      cv::depthTo3d(*depth_, K, depth_real_ref_raw);
+      cv::depthTo3d(depth, K, depth_real_ref_raw);
 
       int iter = 0;
       //clear the vector of detected objects

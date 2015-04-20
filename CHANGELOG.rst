@@ -1,3 +1,8 @@
+0.3.5 (2015-04-19)
+------------------
+* fixed the depth conversion to 32F, updated possible mesh names for both training and detection
+* Contributors: nlyubova
+
 0.3.4 (2015-04-14)
 ------------------
 * remove the sample folder: a lot of old non-working code
