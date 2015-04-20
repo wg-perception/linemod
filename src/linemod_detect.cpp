@@ -226,7 +226,7 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
           // Create a temporary file
           char mesh_path_tmp[L_tmpnam];
           mkstemp(mesh_path_tmp);
-          mesh_path = std::string(mesh_path_tmp) + attachment_name.substr(8);
+          mesh_path = std::string(mesh_path_tmp) + attachment_name.substr(possible_names[i].size());
 
           // Load the mesh and save it to the temporary file
           std::ofstream mesh_file;
