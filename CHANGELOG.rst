@@ -1,5 +1,5 @@
-Forthcoming
------------
+0.3.6 (2015-04-20)
+------------------
 * fixing training and detection for meshes generated with the Reconstration pipeline
 * Contributors: nlyubova
 
