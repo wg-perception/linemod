@@ -1,3 +1,8 @@
+Forthcoming
+-----------
+* small changes in training: object distance and mesh path
+* Contributors: Vincent Rabaud, nlyubova
+
 0.3.6 (2015-04-20)
 ------------------
 * fixing training and detection for meshes generated with the Reconstration pipeline
