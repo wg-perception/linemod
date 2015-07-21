@@ -1,5 +1,5 @@
-Forthcoming
------------
+0.3.7 (2015-07-21)
+------------------
 * small changes in training: object distance and mesh path
 * Contributors: Vincent Rabaud, nlyubova
 
