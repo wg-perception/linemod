@@ -147,10 +147,9 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
       renderer_near_ = document.get_field<double>("renderer_near");
       renderer_far_ = document.get_field<double>("renderer_far");
 
-      std::cout << "Loaded " << object_id
+      if (setupRenderer(object_id))
+        std::cout << "Loaded " << object_id
                 << " with the number of samples " << Rs_[object_id].size() << std::endl << std::endl;
-
-      setupRenderer(object_id);
     }
 
     //initialize the visualization
@@ -195,7 +194,7 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
      * @brief Initializes the renderer with the parameters used in the training phase.
      * The renderer will be later used to render depth clouds for each detected object.
      * @param[in] The object id to initialize.*/
-    void
+    bool
     setupRenderer(const std::string &object_id)
     {
       object_recognition_core::db::ObjectDbParameters db_params(*json_db_);
@@ -208,7 +207,7 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
       if (documents.empty()) {
         std::cerr << "Skipping object id \"" << object_id
             << "\" : no mesh in the DB" << std::endl;
-        return;
+        return false;
       }
 
       // Get the list of _attachments and figure out the original one
@@ -234,7 +233,6 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
           document.get_attachment_stream(attachment_name, mesh_file);
           mesh_file.close();
           std::string str = mesh_path.c_str();
-          std::cout << "mesh_path " << std::string(mesh_path_tmp) << " " << attachment_name.substr(8) << std::endl;
         }
       }
 
@@ -251,6 +249,7 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
       renderer_iterator_->radius_max_ = float(renderer_radius_max_);
       renderer_iterator_->radius_step_ = float(renderer_radius_step_);
       renderer_iterators_.insert(std::pair<std::string,RendererIterator*>(object_id, renderer_iterator_));
+      return true;
     }
 
     int

@@ -166,11 +166,16 @@ namespace ecto_linemod
     *renderer_focal_length_y_ = *param_focal_length_y_;
 
     // the model name can be specified on the command line.
+    if (mesh_path.empty())
+    {
+      std::remove(mesh_path.c_str());
+      std::cerr << "The mesh path is empty for the object id \"" << *object_id_<< std::endl;
+      return ecto::OK;
+    }
+
     Renderer3d renderer = Renderer3d(mesh_path);
     renderer.set_parameters(*renderer_width_, *renderer_height_, *renderer_focal_length_x_,
                             *renderer_focal_length_y_, *renderer_near_, *renderer_far_);
-
-    std::remove(mesh_path.c_str());
 
     RendererIterator renderer_iterator = RendererIterator(&renderer, *renderer_n_points_);
     //set the RendererIterator parameters
@@ -195,7 +200,7 @@ namespace ecto_linemod
 
       R = renderer_iterator.R_obj();
       T = renderer_iterator.T();
-      float distance = fabs(renderer_iterator.D_obj() - float(depth.at<ushort>(depth.rows/2.0f, depth.cols/2.0f)/1000.0f));
+      float distance = renderer_iterator.D_obj() - float(depth.at<ushort>(depth.rows/2.0f, depth.cols/2.0f)/1000.0f);
       K = cv::Matx33f(float(*renderer_focal_length_x_), 0.0f, float(rect.width)/2.0f, 0.0f, float(*renderer_focal_length_y_), float(rect.height)/2.0f, 0.0f, 0.0f, 1.0f);
 
       std::vector<cv::Mat> sources(2);
