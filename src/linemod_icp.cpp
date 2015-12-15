@@ -44,8 +44,8 @@ float matToVec(const cv::Mat_<cv::Vec3f> &src_ref, const cv::Mat_<cv::Vec3f> &sr
   }
 
   float ratio = 0.0f;
-  if ((src_ref.cols > 0) && (src_ref.rows > 0))
-    ratio = float(px_missing) / float(src_ref.cols * src_ref.rows);
+  if (pts_ref.size() > 0)
+    ratio = static_cast<float>(px_missing) /static_cast<float>(pts_ref.size());
   return ratio;
 }
 

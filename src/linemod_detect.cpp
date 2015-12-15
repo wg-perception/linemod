@@ -383,8 +383,8 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
       //get the point clouds (for both reference and model)
       std::vector<cv::Vec3f> pts_real_model_temp;
       std::vector<cv::Vec3f> pts_real_ref_temp;
-      float px_ratio_missing = matToVec(depth_real_model, depth_real_ref, pts_real_model_temp, pts_real_ref_temp);
-      if (px_ratio_missing > *px_match_min_)
+      float px_ratio_missing = matToVec(depth_real_ref, depth_real_model, pts_real_ref_temp, pts_real_model_temp);
+      if (px_ratio_missing > (1.0f-*px_match_min_))
         continue;
 
       //perform the first approximate ICP
