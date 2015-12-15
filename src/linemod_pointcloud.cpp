@@ -16,13 +16,10 @@
 */
 
 #include "linemod_pointcloud.h"
-#include <sensor_msgs/point_cloud2_iterator.h>
 
 /** Initializes the point cloud visualization class */
 LinemodPointcloud::LinemodPointcloud(ros::NodeHandle& nh, const std::string &topic, const std::string &frame_id):
-  nh_(nh),
-  topic_(topic),
-  pc_pub_(nh_.advertise<sensor_msgs::PointCloud2>(topic, 1))
+  pc_pub_(nh.advertise<sensor_msgs::PointCloud2>(topic, 1))
 {
   pc_msg.height = 1;
   pc_msg.width = 4;
@@ -30,7 +27,7 @@ LinemodPointcloud::LinemodPointcloud(ros::NodeHandle& nh, const std::string &top
   pc_msg.header.stamp = ::ros::Time::now();
   pc_msg.is_dense = false;
   pc_msg.is_bigendian = false;
-  modifier = new sensor_msgs::PointCloud2Modifier(pc_msg);
+  modifier  = boost::shared_ptr<sensor_msgs::PointCloud2Modifier>(new sensor_msgs::PointCloud2Modifier(pc_msg));
   modifier->setPointCloud2FieldsByString(2, "xyz", "rgb");
 }
 
