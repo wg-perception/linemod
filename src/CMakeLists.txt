@@ -1,5 +1,4 @@
 # Compile the ecto 
-option(LINEMOD_VIZ_IMG "activate visualization" OFF)
 if(LINEMOD_VIZ_IMG)
   add_definitions("-DLINEMOD_VIZ_IMG=1")
 endif()
