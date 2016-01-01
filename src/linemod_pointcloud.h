@@ -20,9 +20,8 @@
 
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
+#include <sensor_msgs/point_cloud2_iterator.h>
 #include <opencv2/core/core.hpp>
-
-class sensor_msgs::PointCloud2Modifier;
 
 class LinemodPointcloud
 {
@@ -49,8 +48,6 @@ public:
   sensor_msgs::PointCloud2 pc_msg;
 
 private:
-  ros::NodeHandle& nh_;
-  std::string topic_;
   ros::Publisher pc_pub_;
 
   boost::shared_ptr<sensor_msgs::PointCloud2Modifier> modifier;
