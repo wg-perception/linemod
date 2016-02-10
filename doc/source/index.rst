@@ -11,7 +11,7 @@ tricks to get it work properly are in the pre/post processing steps.
 First steps
 ***********
 
-LINE-MOD requires a mesh in order to train a model. You can either use the :ref:`ORK 3d capture <orkcapture:ork_capture>` or,
+LINE-MOD requires a mesh (with its origin in the center of an object) in order to train a model. You can either use the :ref:`ORK 3d capture <orkcapture:ork_capture>` or,
 if you already have a mesh around, just create your object:
 
 .. code-block:: sh
