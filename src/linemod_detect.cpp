@@ -66,7 +66,6 @@ using object_recognition_core::db::ObjectDbPtr;
 #if LINEMOD_VIZ_PCD
   #include "ros/ros.h"
   #include "linemod_pointcloud.h"
-  ros::NodeHandle node_;
   LinemodPointcloud *pci_real_icpin_model;
   LinemodPointcloud *pci_real_icpin_ref;
 #endif
@@ -154,6 +153,7 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
 
     //initialize the visualization
 #if LINEMOD_VIZ_PCD
+    ros::NodeHandle node_;
     pci_real_icpin_model = new LinemodPointcloud(node_, "real_icpin_model", *depth_frame_id_);
     pci_real_icpin_ref = new LinemodPointcloud(node_, "real_icpin_ref", *depth_frame_id_);
 #endif
