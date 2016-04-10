@@ -42,7 +42,14 @@
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#if CV_MAJOR_VERSION == 3
+#include <opencv2/rgbd.hpp>
+namespace cv {
+using namespace cv::rgbd;
+}
+#else
 #include <opencv2/objdetect/objdetect.hpp>
+#endif
 
 #include <object_recognition_core/common/json.hpp>
 #include <object_recognition_core/db/db.h>

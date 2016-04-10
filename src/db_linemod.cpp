@@ -94,7 +94,11 @@ namespace object_recognition_core
       {
         cv::FileStorage fs(file_name, cv::FileStorage::WRITE);
         value.write(fs);
+#if CV_MAJOR_VERSION == 3
+        std::vector<cv::String> ids = value.classIds();
+#else
         std::vector < std::string > ids = value.classIds();
+#endif
         fs << "classes" << "[";
         for (int i = 0; i < (int) ids.size(); ++i)
         {

@@ -41,7 +41,11 @@
 
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
+#if CV_MAJOR_VERSION == 3
+#include <opencv2/rgbd.hpp>
+#else
 #include <opencv2/rgbd/rgbd.hpp>
+#endif
 
 #include <object_recognition_core/db/ModelReader.h>
 #include <object_recognition_core/common/pose_result.h>

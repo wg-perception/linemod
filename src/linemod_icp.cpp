@@ -17,6 +17,8 @@
 
 #include "linemod_icp.h"
 
+#include <limits>
+
 /** get 3D points out of the image */
 float matToVec(const cv::Mat_<cv::Vec3f> &src_ref, const cv::Mat_<cv::Vec3f> &src_mod, std::vector<cv::Vec3f>& pts_ref, std::vector<cv::Vec3f>& pts_mod)
 {

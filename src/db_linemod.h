@@ -37,7 +37,14 @@
 #define DB_LINEMOD_H_
 
 #include <object_recognition_core/db/document.h>
+#if CV_MAJOR_VERSION == 3
+#include <opencv2/rgbd.hpp>
+namespace cv {
+using namespace cv::rgbd;
+}
+#else
 #include <opencv2/objdetect/objdetect.hpp>
+#endif
 
 namespace object_recognition_core
 {
