@@ -174,8 +174,8 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
       params.declare(&Detector::th_obj_dist_, "th_obj_dist", "Threshold on minimal distance between detected objects.", 0.04f);
       params.declare(&Detector::verbose_, "verbose", "If True, print.", false);
       params.declare(&Detector::depth_frame_id_, "depth_frame_id", "The depth camera frame id.", "camera_depth_optical_frame");
-      params.declare(&Detector::icp_dist_min_, "icp_dist_min", "", 0.06f);
-      params.declare(&Detector::px_match_min_, "px_match_min", "", 0.25f);
+      params.declare(&Detector::icp_dist_min_, "icp_dist_min", "The minimal accepted icp distance.", 0.06f);
+      params.declare(&Detector::px_match_min_, "px_match_min", "The minimal percentage of pixels with matching depth.", 0.25f);
     }
 
     static void
@@ -499,7 +499,7 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
     ecto::spore<std::string> depth_frame_id_;
     /** The minimal accepted icp distance*/
     ecto::spore<float> icp_dist_min_;
-    /** The minimal percetage of pixels with matching depth*/
+    /** The minimal percentage of pixels with matching depth*/
     ecto::spore<float> px_match_min_;
     /** The object recognition results */
     ecto::spore<std::vector<PoseResult> > pose_results_;
