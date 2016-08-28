@@ -28,7 +28,6 @@ if(LINEMOD_VIZ_PCD)
 endif()
 
 include_directories(${INCLUDE_DIRS})
-link_directories(${catkin_LIBRARY_DIRS})
 ectomodule(ecto_linemod DESTINATION ${PROJECT_NAME}/ecto_cells
                         INSTALL
                         ${SRC_FILES}
