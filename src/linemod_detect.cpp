@@ -107,17 +107,22 @@ namespace ecto_linemod
 struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
   void parameter_callback(
       const object_recognition_core::db::Documents & db_documents) {
-    /*if (submethod.get_str() == "DefaultLINEMOD")
-     detector_ = cv::linemod::getDefaultLINEMOD();
-     else
-     throw std::runtime_error("Unsupported method. Supported ones are: DefaultLINEMOD");*/
 
     if(!(*use_rgb_) && !(*use_depth_))
       throw std::runtime_error("Unsupported type of input data: either use_rgb or use_depth (or both) parameters shouled be true");
     if(!(*use_rgb_) && *use_depth_)
       std::cout << "WARNING:: Gradients computation will be based on depth data (but not rgb image)." << std::endl;
-    detector_ = cv::linemod::getDefaultLINEMOD();
-
+    
+    if(!use_customed_linemod_)
+      detector_ = cv::linemod::getDefaultLINEMOD();
+    else{
+      static const int T_DEFAULTS[] = {customed_linemod_T1_, customed_linemod_T1_};
+      std::vector< cv::Ptr<cv::linemod::Modality> > modalities;
+      modalities.push_back(new cv::linemod::ColorGradient());
+      modalities.push_back(new cv::linemod::DepthNormal());
+      detector_ = new cv::linemod::Detector(modalities, std::vector<int>(T_DEFAULTS, T_DEFAULTS +2));
+    }
+    
     BOOST_FOREACH(const object_recognition_core::db::Document & document, db_documents) {
       std::string object_id = document.get_field<ObjectId>("object_id");
 
@@ -171,6 +176,9 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
       params.declare(&Detector::visualize_, "visualize", "If True, visualize the output.", false);
       params.declare(&Detector::use_rgb_, "use_rgb", "If True, use rgb-based detector.", true);
       params.declare(&Detector::use_depth_, "use_depth", "If True, use depth-based detector.", true);
+      params.declare(&Detector::use_customed_linemod_, "use_customed_linemod", "If True, does not use getDefaultLINEMOD.", false);
+      params.declare(&Detector::customed_linemod_T1_, "customed_linemod_T1", "If True, does not use getDefaultLINEMOD.", 5);
+      params.declare(&Detector::customed_linemod_T2_, "customed_linemod_T2", "If True, does not use getDefaultLINEMOD.", 8);
       params.declare(&Detector::th_obj_dist_, "th_obj_dist", "Threshold on minimal distance between detected objects.", 0.04f);
       params.declare(&Detector::verbose_, "verbose", "If True, print.", false);
       params.declare(&Detector::depth_frame_id_, "depth_frame_id", "The depth camera frame id.", "camera_depth_optical_frame");
@@ -274,9 +282,9 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
       if (*use_rgb_)
       {
         cv::Mat color;
-        if (color_->rows > 960)
-          cv::pyrDown(color_->rowRange(0, 960), color);
-        else
+//         if (color_->rows > 960)
+//           cv::pyrDown(color_->rowRange(0, 960), color);
+//         else
           color_->copyTo(color);
         if (*visualize_)
           display = color;
