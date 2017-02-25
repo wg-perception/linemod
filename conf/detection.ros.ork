@@ -1,25 +1,24 @@
-# info about the db
-
-#source1:
-#  type: 'OpenNI'
-#  module: 'object_recognition_core.io.source'
-#  parameters:
-#    image_mode: 'SXGA_RES'
-#    depth_mode: 'VGA_RES'
-#    image_fps: 'FPS_15'
-#    depth_fps: 'FPS_30'
-
 source1:
   type: RosKinect
   module: 'object_recognition_ros.io'
   parameters:
-    rgb_frame_id: 'camera_rgb_optical_frame'
-    rgb_image_topic: '/camera/rgb/image_rect_color'
-    rgb_camera_info: '/camera/rgb/camera_info'
-    depth_frame_id: 'camera_depth_optical_frame'
-    depth_image_topic: '/camera/depth_registered/image_raw'
-    depth_camera_info: '/camera/depth_registered/camera_info'
-#  bag: /home/vrabaud/tod_data_new/training/object_recognition_capture/eggo_01.bag
+    rgb_frame_id: kinect2_rgb_optical_frame
+    rgb_image_topic: /kinect2/qhd/image_color
+    rgb_camera_info: /kinect2/qhd/camera_info
+    depth_image_topic: /kinect2/qhd/image_depth_rect
+    depth_camera_info: /kinect2/qhd/camera_info
+   #  The maximum x value (in the camera reference frame)
+    x_max: 3.40282346639e+38
+   #  The minimum x value (in the camera reference frame)
+    x_min: -3.40282346639e+38
+   #  The maximum y value (in the camera reference frame)
+    y_max: 3.40282346639e+38
+   #  The minimum y value (in the camera reference frame)
+    y_min: -3.40282346639e+38
+   #  The maximum z value (in the camera reference frame)
+    z_max: 3.40282346639e+38
+   #  The minimum z value (in the camera reference frame)
+    z_min: -3.40282346639e+38
 
 sink1:
   type: Publisher
@@ -40,7 +39,7 @@ pipeline1:
     th_obj_dist: 0.1
     icp_dist_min: 0.05 #0.06
     px_match_min: 0.25 #0.5
-    depth_frame_id: 'camera_depth_optical_frame' #CameraDepth_frame
+    depth_frame_id: 'kinect2_depth_optical_frame' #CameraDepth_frame
     # The list of object_ids to analyze
     object_ids: 'all'
     #object_ids: ['ed149575c2a44c1c095c5bc1b80c3038']
