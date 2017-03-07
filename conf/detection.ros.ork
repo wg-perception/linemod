@@ -13,12 +13,12 @@ source1:
   type: RosKinect
   module: 'object_recognition_ros.io'
   parameters:
-    rgb_frame_id: 'camera_rgb_optical_frame'
-    rgb_image_topic: '/camera/rgb/image_rect_color'
-    rgb_camera_info: '/camera/rgb/camera_info'
-    depth_frame_id: 'camera_depth_optical_frame'
-    depth_image_topic: '/camera/depth_registered/image_raw'
-    depth_camera_info: '/camera/depth_registered/camera_info'
+    rgb_frame_id: kinect2_rgb_optical_frame
+    rgb_image_topic: /kinect2/qhd/image_color
+    rgb_camera_info: /kinect2/qhd/camera_info
+    depth_frame_id: kinect2_depth_optical_frame 
+    depth_image_topic: /kinect2/qhd/image_depth_rect
+    depth_camera_info: /kinect2/qhd/camera_info
 #  bag: /home/vrabaud/tod_data_new/training/object_recognition_capture/eggo_01.bag
 
 sink1:
