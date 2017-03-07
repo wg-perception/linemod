@@ -116,7 +116,12 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
       throw std::runtime_error("Unsupported type of input data: either use_rgb or use_depth (or both) parameters shouled be true");
     if(!(*use_rgb_) && *use_depth_)
       std::cout << "WARNING:: Gradients computation will be based on depth data (but not rgb image)." << std::endl;
-    detector_ = cv::linemod::getDefaultLINEMOD();
+    //detector_ = cv::linemod::getDefaultLINEMOD();
+    static const int T_LVLS[] = {4, 15};
+     std::vector< cv::Ptr<cv::linemod::Modality> > modalities;
+     modalities.push_back(new cv::linemod::ColorGradient());
+     modalities.push_back(new cv::linemod::DepthNormal());
+     detector_ = new cv::linemod::Detector(modalities, std::vector<int>(T_LVLS, T_LVLS +2));
 
     BOOST_FOREACH(const object_recognition_core::db::Document & document, db_documents) {
       std::string object_id = document.get_field<ObjectId>("object_id");
