@@ -192,6 +192,10 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
     configure(const tendrils& params, const tendrils& inputs, const tendrils& outputs)
     {
       configure_impl();
+
+#if LINEMOD_VIZ_IMG
+      cvStartWindowThread();
+#endif
     }
 
     /**
