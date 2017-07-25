@@ -3,9 +3,9 @@ pipeline1:
   module: 'object_recognition_linemod'
   parameters:
     # The list of object_ids to analyze
-    object_ids: ['b7b98ffd82048ef043fa6c071a0532f3']
-    renderer_width: 960
-    renderer_height: 540
+    object_ids: 'all'
+    renderer_width: 640
+    renderer_height: 480
     db:
       type: 'CouchDB'
       root: 'http://localhost:5984'
