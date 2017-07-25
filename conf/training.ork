@@ -4,7 +4,10 @@ pipeline1:
   parameters:
     # The list of object_ids to analyze
     object_ids: 'all'
+    renderer_width: 640
+    renderer_height: 480
     db:
       type: 'CouchDB'
       root: 'http://localhost:5984'
       collection: 'object_recognition'
+
