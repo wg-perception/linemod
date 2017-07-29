@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 project(object_recognition_linemod)
 
-option(LINEMOD_VIZ_IMG "visualize images with detected objects features" OFF)
-option(LINEMOD_VIZ_PCD "visualize point clouds from the reference image and its match from DB" OFF)
+option(LINEMOD_VIZ_IMG "visualize images with detected objects features" ON)
+option(LINEMOD_VIZ_PCD "visualize point clouds from the reference image and its match from DB" ON)
 
 find_package(catkin REQUIRED object_recognition_core object_recognition_renderer opencv_candidate)
 catkin_package(CATKIN_DEPENDS ecto object_recognition_core object_recognition_renderer opencv_candidate
@@ -12,7 +12,7 @@ catkin_package(CATKIN_DEPENDS ecto object_recognition_core object_recognition_re
 #install targets for all things python
 catkin_python_setup()
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 3 REQUIRED)
 
 include_directories(include)
 include_directories(SYSTEM ${catkin_INCLUDE_DIRS}
