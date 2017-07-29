@@ -28,11 +28,11 @@ source1:
     depth_mode: 'VGA_RES'
     image_fps: 'FPS_15'
     depth_fps: 'FPS_30'
-    rgb_frame_id: 'camera_rgb_optical_frame'
-    rgb_camera_info: '/camera/rgb/camera_info'
-    rgb_image_topic: '/camera/rgb/image_rect_color'
-    depth_image_topic: '/camera/depth/image_rect'
-    depth_camera_info: '/camera/depth/camera_info'
+    rgb_frame_id: 'base_xtion_rgb_optical_frame'
+    rgb_camera_info: '/base_xtion/rgb/camera_info'
+    rgb_image_topic: '/base_xtion/rgb/image_rect_color'
+    depth_image_topic: '/base_xtion/depth/image_rect'
+    depth_camera_info: '/base_xtion/depth/camera_info'
 
 sink1:
   type: Publisher
@@ -53,7 +53,7 @@ pipeline1:
     th_obj_dist: 0.1
     icp_dist_min: 0.05 #0.06
     px_match_min: 0.25 #0.5
-    depth_frame_id: 'camera_depth_optical_frame' #CameraDepth_frame
+    depth_frame_id: 'base_xtion_depth_optical_frame' #CameraDepth_frame
     # The list of object_ids to analyze
     object_ids: 'all'
     #object_ids: ['22cfa817cd73ba44b26663c69c000c0a']
